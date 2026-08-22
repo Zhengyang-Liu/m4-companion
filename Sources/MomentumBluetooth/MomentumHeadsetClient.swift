@@ -20,6 +20,19 @@ public struct MomentumSnapshot: Equatable, Codable, Sendable {
     }
 }
 
+public struct MomentumSoundPersonalizationPrerequisites: Equatable, Sendable {
+    public let compatibilityMode: MomentumBluetoothCompatibilityMode
+    public let profileState: MomentumSoundPersonalizationProfileState
+
+    public init(
+        compatibilityMode: MomentumBluetoothCompatibilityMode,
+        profileState: MomentumSoundPersonalizationProfileState
+    ) {
+        self.compatibilityMode = compatibilityMode
+        self.profileState = profileState
+    }
+}
+
 private actor MomentumClientOperationGate {
     private var isLocked = false
     private var waiters: [CheckedContinuation<Void, Never>] = []
@@ -65,6 +78,168 @@ public final class MomentumHeadsetClient {
         }
     }
 
+    /// Read-only diagnostic for the confirmed Sennheiser audio/podcast mode getter.
+    /// The command has no payload and does not change headphone state.
+    public func soundPersonalizationModePayload() async throws -> Data {
+        try await withExclusiveOperation {
+            try await self.withControlTransport { transport in
+                try await self.exchange(
+                    command: MomentumCommands.getSoundMode,
+                    expecting: [MomentumCommands.getSoundModeResponse],
+                    using: transport
+                ).payload
+            }
+        }
+    }
+
+    public func soundMode() async throws -> MomentumSoundMode {
+        try MomentumControlCodec.parseSoundMode(try await soundPersonalizationModePayload())
+    }
+
+    public func soundPersonalizationPrerequisites() async throws -> MomentumSoundPersonalizationPrerequisites {
+        try await withExclusiveOperation {
+            try await self.withControlTransport { transport in
+                try await self.soundPersonalizationPrerequisites(using: transport)
+            }
+        }
+    }
+
+    public func setAudioMode(_ desired: MomentumSoundMode) async throws -> MomentumControlsSnapshot {
+        try await withExclusiveOperation {
+            try await self.withControlTransport { transport in
+                let currentPacket = try await self.exchange(
+                    command: MomentumCommands.getSoundMode,
+                    expecting: [MomentumCommands.getSoundModeResponse],
+                    using: transport
+                )
+                let current = try MomentumControlCodec.parseSoundMode(currentPacket.payload)
+                if current == desired {
+                    return try await self.controlsSnapshot(using: transport)
+                }
+
+                if desired == .soundPersonalization {
+                    let prerequisites = try await self.soundPersonalizationPrerequisites(using: transport)
+                    guard prerequisites.profileState == .calibrated else {
+                        throw MomentumBluetoothError.switchFailed(
+                            "No calibrated Sound Personalization profile is stored on the headphones."
+                        )
+                    }
+                    guard prerequisites.compatibilityMode == .betterCompatibility else {
+                        throw MomentumBluetoothError.switchFailed(
+                            "Disable High Resolution Audio mode before enabling Sound Personalization."
+                        )
+                    }
+                }
+
+                var commandResponse: GaiaPacket?
+                var commandError: Error?
+                do {
+                    commandResponse = try await self.exchange(
+                        command: MomentumCommands.setAudioMode,
+                        payload: MomentumControlCodec.encodeAudioMode(desired),
+                        expecting: [
+                            MomentumCommands.setAudioModeResponse,
+                            MomentumCommands.setAudioModeResponse | 0x0080
+                        ],
+                        using: transport
+                    )
+                } catch {
+                    commandError = error
+                }
+
+                var lastPollError: Error?
+                for _ in 0..<20 {
+                    try await Task.sleep(for: .milliseconds(250))
+                    do {
+                        let packet = try await self.exchange(
+                            command: MomentumCommands.getSoundMode,
+                            expecting: [MomentumCommands.getSoundModeResponse],
+                            using: transport
+                        )
+                        let readback = try MomentumControlCodec.parseSoundMode(packet.payload)
+                        if MomentumSoundModeTransitionPolicy.reached(desired: desired, readback: readback) {
+                            return try await self.controlsSnapshot(using: transport)
+                        }
+                    } catch is CancellationError {
+                        throw CancellationError()
+                    } catch {
+                        lastPollError = error
+                    }
+                }
+
+                if let commandResponse,
+                   commandResponse.commandID == (MomentumCommands.setAudioModeResponse | 0x0080) {
+                    throw MomentumProtocolError.deviceRejected(
+                        command: MomentumCommands.setAudioMode,
+                        status: commandResponse.payload.first
+                    )
+                }
+                if let commandError { throw commandError }
+                if let lastPollError { throw lastPollError }
+                throw MomentumBluetoothError.switchFailed(
+                    "The headphones did not enter \(desired.displayName)."
+                )
+            }
+        }
+    }
+
+    private func soundPersonalizationPrerequisites(
+        using transport: RFCOMMMomentumTransport
+    ) async throws -> MomentumSoundPersonalizationPrerequisites {
+        let compatibility = try await self.exchange(
+            command: MomentumCommands.getBluetoothCompatibilityMode,
+            expecting: [MomentumCommands.getBluetoothCompatibilityModeResponse],
+            using: transport
+        )
+        let profile = try await self.exchange(
+            command: MomentumCommands.getSoundPersonalizationProfileState,
+            expecting: [MomentumCommands.getSoundPersonalizationProfileStateResponse],
+            using: transport
+        )
+        return MomentumSoundPersonalizationPrerequisites(
+            compatibilityMode: try MomentumControlCodec.parseBluetoothCompatibilityMode(
+                compatibility.payload
+            ),
+            profileState: try MomentumControlCodec.parseSoundPersonalizationProfileState(
+                profile.payload
+            )
+        )
+    }
+
+
+    /// Registers only for known, non-destructive notification feature IDs and
+    /// returns their initial state dump. No setting or operational command is sent.
+    public func soundPersonalizationNotificationProbe() async throws -> [GaiaPacket] {
+        try await withExclusiveOperation {
+            try await self.withControlTransport { transport in
+                var packets: [GaiaPacket] = []
+                var parseError: Error?
+                transport.onPacket = { data in
+                    do {
+                        let packet = try GaiaPacket(data: data)
+                        guard packet.vendorID == MomentumCommands.vendorID else { return }
+                        packets.append(packet)
+                    } catch {
+                        parseError = error
+                    }
+                }
+
+                for feature: UInt8 in [16, 20] {
+                    try transport.send(
+                        GaiaPacket(
+                            vendorID: MomentumCommands.vendorID,
+                            commandID: 0x0007,
+                            payload: Data([feature])
+                        ).data
+                    )
+                    try await Task.sleep(for: .seconds(1))
+                    if let parseError { throw parseError }
+                }
+                return packets
+            }
+        }
+    }
+
     public func setAncEnabled(_ enabled: Bool) async throws -> MomentumControlsSnapshot {
         try await performControlWrites([
             MomentumControlWrite(
@@ -92,6 +267,10 @@ public final class MomentumHeadsetClient {
 
     public func setCustomMode() async throws -> MomentumControlsSnapshot {
         try await performControlWrites(MomentumControlPlan.customMode)
+    }
+
+    public func setCustomMode(restoringLevel level: Int) async throws -> MomentumControlsSnapshot {
+        try await performControlWrites(MomentumControlPlan.customModeRestoring(level: level))
     }
 
     public func setAntiWind(_ value: MomentumAntiWind) async throws -> MomentumControlsSnapshot {
@@ -282,6 +461,11 @@ public final class MomentumHeadsetClient {
     private func controlsSnapshot(
         using transport: RFCOMMMomentumTransport
     ) async throws -> MomentumControlsSnapshot {
+        let soundModePacket = try await exchange(
+            command: MomentumCommands.getSoundMode,
+            expecting: [MomentumCommands.getSoundModeResponse],
+            using: transport
+        )
         let ancPacket = try await exchange(
             command: MomentumCommands.getAncEnabled,
             expecting: [MomentumCommands.getAncEnabledResponse],
@@ -325,6 +509,7 @@ public final class MomentumHeadsetClient {
             using: transport
         )
         return MomentumControlsSnapshot(
+            soundMode: try MomentumControlCodec.parseSoundMode(soundModePacket.payload),
             ancEnabled: try MomentumControlCodec.parseBoolean(
                 ancPacket.payload,
                 command: MomentumCommands.getAncEnabled

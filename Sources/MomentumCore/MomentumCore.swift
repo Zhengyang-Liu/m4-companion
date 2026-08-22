@@ -255,6 +255,7 @@ public enum ConnectionAttemptPolicy {
     ) async throws -> Bool {
         precondition(maximumAttempts > 0 && pollsPerAttempt > 0)
         var lastCommandError: Error?
+        var lastPollError: Error?
         for _ in 0..<maximumAttempts {
             do {
                 try await sendConnect()
@@ -265,10 +266,17 @@ public enum ConnectionAttemptPolicy {
                 lastCommandError = error
             }
             for _ in 0..<pollsPerAttempt {
-                if try await pollConnected() { return true }
+                do {
+                    if try await pollConnected() { return true }
+                } catch is CancellationError {
+                    throw CancellationError()
+                } catch {
+                    lastPollError = error
+                }
             }
         }
         if let lastCommandError { throw lastCommandError }
+        if let lastPollError { throw lastPollError }
         return false
     }
 }
@@ -292,6 +300,15 @@ public enum MomentumCommands {
     public static let ownIndexResponse: UInt16 = 0x1507
     public static let maxConnections: UInt16 = 0x1409
     public static let maxConnectionsResponse: UInt16 = 0x1509
+
+    public static let setAudioMode: UInt16 = 0x0803
+    public static let setAudioModeResponse: UInt16 = 0x0903
+    public static let getSoundMode: UInt16 = 0x0804
+    public static let getSoundModeResponse: UInt16 = 0x0904
+    public static let getBluetoothCompatibilityMode: UInt16 = 0x0406
+    public static let getBluetoothCompatibilityModeResponse: UInt16 = 0x0506
+    public static let getSoundPersonalizationProfileState: UInt16 = 0x2001
+    public static let getSoundPersonalizationProfileStateResponse: UInt16 = 0x2101
 
     public static let setAncMode: UInt16 = 0x1a00
     public static let setAncModeResponse: UInt16 = 0x1b00

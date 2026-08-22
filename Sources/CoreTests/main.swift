@@ -142,6 +142,27 @@ struct CoreTests {
         precondition(asynchronousAttempts == 1)
         print("PASS asynchronous completion after connect error without duplicate command")
 
+        var transientPollAttempts = 0
+        var transientPollCount = 0
+        let completedAfterTransientPollErrors = try await ConnectionAttemptPolicy.connect(
+            maximumAttempts: 2,
+            pollsPerAttempt: 4,
+            sendConnect: {
+                transientPollAttempts += 1
+            },
+            pollConnected: {
+                transientPollCount += 1
+                if transientPollCount <= 2 {
+                    throw MomentumProtocolError.packetTooShort
+                }
+                return transientPollCount == 3
+            }
+        )
+        precondition(completedAfterTransientPollErrors)
+        precondition(transientPollAttempts == 1)
+        precondition(transientPollCount == 3)
+        print("PASS transient connection-status polling errors stay within one click")
+
         let selectedAddress = try MomentumHeadsetAddressResolver.resolve([
             MomentumHeadsetCandidate(address: "AA-BB-CC-DD-EE-FF", isConnected: true)
         ])
@@ -186,6 +207,120 @@ struct CoreTests {
         precondition(!MomentumActionCapability.isValid(presented: nil, expected: token))
         print("PASS strict action capability validation")
 
+        let widgetActionID = UUID(uuidString: "11111111-2222-3333-4444-555555555555")!
+        let widgetActionNow = Date(timeIntervalSince1970: 1_000)
+        let widgetAction = MomentumWidgetActionRequest(
+            id: widgetActionID,
+            createdAt: widgetActionNow,
+            deviceIndex: 2,
+            expectedName: "Office PC",
+            desiredConnected: true,
+            actionToken: token
+        )
+        let widgetActionRoundTrip = try JSONDecoder().decode(
+            MomentumWidgetActionRequest.self,
+            from: JSONEncoder().encode(widgetAction)
+        )
+        precondition(widgetActionRoundTrip == widgetAction)
+        precondition(MomentumWidgetActionValidator.isAuthorized(
+            widgetAction,
+            expectedToken: token,
+            snapshot: snapshot,
+            now: widgetActionNow.addingTimeInterval(5)
+        ))
+        let staleWidgetAction = MomentumWidgetActionRequest(
+            id: widgetActionID,
+            createdAt: widgetActionNow.addingTimeInterval(-31),
+            deviceIndex: 2,
+            expectedName: "Office PC",
+            desiredConnected: true,
+            actionToken: token
+        )
+        precondition(!MomentumWidgetActionValidator.isAuthorized(
+            staleWidgetAction,
+            expectedToken: token,
+            snapshot: snapshot,
+            now: widgetActionNow
+        ))
+        let ownDeviceWidgetAction = MomentumWidgetActionRequest(
+            id: widgetActionID,
+            createdAt: widgetActionNow,
+            deviceIndex: snapshot.ownIndex,
+            expectedName: "mac",
+            desiredConnected: false,
+            actionToken: token
+        )
+        precondition(!MomentumWidgetActionValidator.isAuthorized(
+            ownDeviceWidgetAction,
+            expectedToken: token,
+            snapshot: snapshot,
+            now: widgetActionNow
+        ))
+        print("PASS background widget-action authorization policy")
+
+        let widgetActionDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("m4-widget-action-\(UUID().uuidString)", isDirectory: true)
+        defer { try? FileManager.default.removeItem(at: widgetActionDirectory) }
+        let secondWidgetAction = MomentumWidgetActionRequest(
+            id: UUID(uuidString: "66666666-7777-8888-9999-AAAAAAAAAAAA")!,
+            createdAt: widgetActionNow.addingTimeInterval(1),
+            deviceIndex: 3,
+            expectedName: "Home PC",
+            desiredConnected: false,
+            actionToken: token
+        )
+        try MomentumWidgetActionStore.enqueue(widgetAction, in: widgetActionDirectory)
+        try MomentumWidgetActionStore.enqueue(secondWidgetAction, in: widgetActionDirectory)
+        let requestPermissions = try FileManager.default.attributesOfItem(
+            atPath: MomentumWidgetActionStore.readyFileURL(
+                for: widgetAction.id,
+                in: widgetActionDirectory
+            ).path
+        )[.posixPermissions] as? NSNumber
+        precondition(requestPermissions?.intValue == 0o600)
+        let firstClaimedWidgetAction = try MomentumWidgetActionStore.claimNextAuthorized(
+            expectedToken: token,
+            snapshot: snapshot,
+            now: widgetActionNow.addingTimeInterval(5),
+            from: widgetActionDirectory
+        )
+        let secondClaimedWidgetAction = try MomentumWidgetActionStore.claimNextAuthorized(
+            expectedToken: token,
+            snapshot: snapshot,
+            now: widgetActionNow.addingTimeInterval(5),
+            from: widgetActionDirectory
+        )
+        precondition(Set([firstClaimedWidgetAction?.id, secondClaimedWidgetAction?.id].compactMap { $0 }) == Set([
+            widgetAction.id,
+            secondWidgetAction.id
+        ]))
+        let thirdClaimedWidgetAction = try MomentumWidgetActionStore.claimNextAuthorized(
+            expectedToken: token,
+            snapshot: snapshot,
+            now: widgetActionNow.addingTimeInterval(5),
+            from: widgetActionDirectory
+        )
+        precondition(thirdClaimedWidgetAction == nil)
+        print("PASS durable multi-request widget-action queue")
+
+        let watcherSemaphore = DispatchSemaphore(value: 0)
+        let watcher = try MomentumWidgetActionQueueWatcher(
+            directory: widgetActionDirectory,
+            queue: DispatchQueue.global(qos: .userInitiated)
+        ) {
+            watcherSemaphore.signal()
+        }
+        let watchedWidgetAction = MomentumWidgetActionRequest(
+            deviceIndex: 2,
+            expectedName: "Office PC",
+            desiredConnected: true,
+            actionToken: token
+        )
+        try MomentumWidgetActionStore.enqueue(watchedWidgetAction, in: widgetActionDirectory)
+        precondition(watcherSemaphore.wait(timeout: .now() + 2) == .success)
+        watcher.cancel()
+        print("PASS cross-process widget-action queue watcher")
+
         let legacyStateJSON = try JSONSerialization.data(withJSONObject: [
             "snapshot": [
                 "devices": [],
@@ -215,7 +350,53 @@ struct CoreTests {
         precondition(MomentumCommands.getEqConfig == 0x1000)
         precondition(MomentumCommands.getEqBand == 0x1002)
         precondition(MomentumCommands.getBassBoost == 0x1009)
-        print("PASS noise-control and EQ command IDs")
+        precondition(MomentumCommands.setAudioMode == 0x0803)
+        precondition(MomentumCommands.setAudioModeResponse == 0x0903)
+        precondition(MomentumCommands.getSoundMode == 0x0804)
+        precondition(MomentumCommands.getSoundModeResponse == 0x0904)
+        precondition(MomentumCommands.getBluetoothCompatibilityMode == 0x0406)
+        precondition(MomentumCommands.getBluetoothCompatibilityModeResponse == 0x0506)
+        precondition(MomentumCommands.getSoundPersonalizationProfileState == 0x2001)
+        precondition(MomentumCommands.getSoundPersonalizationProfileStateResponse == 0x2101)
+        print("PASS noise-control, EQ, sound-mode, compatibility, and personalization command IDs")
+
+        let notParameterized = try MomentumControlCodec.parseSoundPersonalizationProfileState(Data([0]))
+        let calibrated = try MomentumControlCodec.parseSoundPersonalizationProfileState(Data([2]))
+        precondition(notParameterized == .notParameterized)
+        precondition(calibrated == .calibrated)
+
+        let betterAudioMode = try MomentumControlCodec.parseBluetoothCompatibilityMode(Data([0]))
+        let betterCompatibilityMode = try MomentumControlCodec.parseBluetoothCompatibilityMode(Data([1]))
+        precondition(betterAudioMode == .betterAudio)
+        precondition(betterCompatibilityMode == .betterCompatibility)
+
+        let equalizerSoundMode = try MomentumControlCodec.parseSoundMode(Data([0, 1]))
+        let personalizedSoundMode = try MomentumControlCodec.parseSoundMode(Data([0, 3]))
+        precondition(equalizerSoundMode == .equalizer)
+        precondition(personalizedSoundMode == .soundPersonalization)
+        precondition(MomentumControlCodec.encodeAudioMode(.equalizer) == Data([0, 1]))
+        precondition(MomentumControlCodec.encodeAudioMode(.soundPersonalization) == Data([0, 3]))
+        precondition(MomentumSoundModeTransitionPolicy.reached(
+            desired: .soundPersonalization,
+            readback: .soundPersonalization
+        ))
+        precondition(!MomentumSoundModeTransitionPolicy.reached(
+            desired: .soundPersonalization,
+            readback: .equalizer
+        ))
+
+        do {
+            _ = try MomentumControlCodec.parseSoundMode(Data([0, 3, 9]))
+            preconditionFailure("Sound mode payload length must be strict")
+        } catch MomentumProtocolError.malformedControlPayload(command: MomentumCommands.getSoundMode) {
+            // Expected.
+        }
+        do {
+            _ = try MomentumControlCodec.parseSoundMode(Data([1, 3]))
+            preconditionFailure("Sound mode prefix must be zero")
+        } catch MomentumProtocolError.malformedControlPayload(command: MomentumCommands.getSoundMode) {
+            print("PASS Equalizer and Sound Personalization codec")
+        }
 
         let modes = try MomentumControlCodec.parseAncModes(Data([3, 1, 1, 2, 2, 0]))
         precondition(modes == MomentumAncModes(antiWind: .automatic, comfortEnabled: false, adaptiveEnabled: true))
@@ -278,6 +459,69 @@ struct CoreTests {
             MomentumControlWrite(command: MomentumCommands.setAncEnabled, payload: Data([1])),
             MomentumControlWrite(command: MomentumCommands.setAncMode, payload: Data([MomentumAncMode.adaptive.rawValue, 0]))
         ])
+        precondition(MomentumControlPlan.customModeRestoring(level: 42) == customPlan + [
+            MomentumControlWrite(command: MomentumCommands.setTransparencyLevel, payload: Data([42]))
+        ])
+        precondition(MomentumCustomANCLevelPolicy.updatedRememberedLevel(
+            current: 37,
+            ancEnabled: true,
+            adaptiveEnabled: false,
+            reportedLevel: 42
+        ) == 42)
+        precondition(MomentumCustomANCLevelPolicy.updatedRememberedLevel(
+            current: 42,
+            ancEnabled: true,
+            adaptiveEnabled: true,
+            reportedLevel: 100
+        ) == 42)
+        precondition(MomentumCustomANCLevelPolicy.updatedRememberedLevel(
+            current: 42,
+            ancEnabled: false,
+            adaptiveEnabled: false,
+            reportedLevel: 100
+        ) == 42)
+        precondition(MomentumCustomANCLevelPolicy.levelToRestore(remembered: 42, fallback: 100) == 42)
+        precondition(MomentumCustomANCLevelPolicy.levelToRestore(remembered: nil, fallback: 37) == 37)
+        print("PASS custom ANC level memory across mode changes")
+
+        let firstUserProfile = MomentumUserEQProfile(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
+            name: "Mine",
+            gainsDB: [1, 2, 3, 4, 5]
+        )
+        let secondUserProfile = MomentumUserEQProfile(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000002")!,
+            name: "Night",
+            gainsDB: [-1, -2, -3, -4, -5]
+        )
+        var userProfiles: [MomentumUserEQProfile] = []
+        userProfiles = try MomentumUserEQProfilePolicy.saving(firstUserProfile, in: userProfiles)
+        userProfiles = try MomentumUserEQProfilePolicy.saving(secondUserProfile, in: userProfiles)
+        precondition(userProfiles.map(\.name) == ["Night", "Mine"])
+        let updatedMine = MomentumUserEQProfile(
+            id: UUID(uuidString: "00000000-0000-0000-0000-000000000003")!,
+            name: " mine ",
+            gainsDB: [6, 6, 6, 6, 6]
+        )
+        userProfiles = try MomentumUserEQProfilePolicy.saving(updatedMine, in: userProfiles)
+        precondition(userProfiles.map(\.name) == ["mine", "Night"])
+        precondition(userProfiles[0].gainsDB == [6, 6, 6, 6, 6])
+        let combinedProfiles = MomentumUserEQProfilePolicy.userFirst(
+            userProfiles: userProfiles,
+            builtInProfiles: MomentumEQPreset.available(forBandCount: 5)
+        )
+        precondition(combinedProfiles.prefix(2).map(\.name) == ["mine", "Night"])
+        do {
+            _ = try MomentumUserEQProfilePolicy.saving(
+                MomentumUserEQProfile(name: "   ", gainsDB: [0, 0, 0, 0, 0]),
+                in: userProfiles
+            )
+            preconditionFailure("Blank user EQ profile name must be rejected")
+        } catch MomentumUserEQProfileError.invalidName {
+            // Expected.
+        }
+        print("PASS user EQ profiles save, replace, and sort before built-ins")
+
         let transparencyPlan = MomentumControlPlan.transparency(level: 150)
         precondition(transparencyPlan == [
             MomentumControlWrite(command: MomentumCommands.setAncMode, payload: Data([MomentumAncMode.adaptive.rawValue, 0])),
@@ -300,6 +544,7 @@ struct CoreTests {
         }
 
         let controls = MomentumControlsSnapshot(
+            soundMode: .soundPersonalization,
             ancEnabled: true,
             ancModes: modes,
             transparencyLevel: 42,

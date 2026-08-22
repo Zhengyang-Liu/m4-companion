@@ -4,6 +4,6 @@
   <key>com.apple.application-identifier</key><string>$(AppIdentifierPrefix)$(PRODUCT_BUNDLE_IDENTIFIER)</string>
   <key>com.apple.developer.team-identifier</key><string>$(DEVELOPMENT_TEAM)</string>
   <key>com.apple.security.app-sandbox</key><true/>
-  <key>com.apple.security.temporary-exception.files.home-relative-path.read-only</key>
+  <key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
   <array><string>/Library/Application Support/MomentumDeviceSwitcher/</string></array>
 </dict></plist>

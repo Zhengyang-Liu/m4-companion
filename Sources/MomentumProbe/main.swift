@@ -16,6 +16,39 @@ struct MomentumProbe {
                 print(String(decoding: try encoder.encode(controls), as: UTF8.self))
                 return
             }
+            if arguments == ["sound-personalization"] {
+                let payload = try await client.soundPersonalizationModePayload()
+                let controls = try await client.controlsSnapshot()
+                let payloadHex = payload.map { String(format: "%02X", $0) }.joined(separator: " ")
+                print("audio-mode-payload=\(payloadHex)")
+                print("eq-gains=\(controls.eqBands.sorted { $0.index < $1.index }.map { $0.gainDB })")
+                print("bass-boost=\(controls.bassBoostEnabled)")
+                let notifications = try await client.soundPersonalizationNotificationProbe()
+                for packet in notifications {
+                    let bytes = packet.payload.map { String(format: "%02X", $0) }.joined(separator: " ")
+                    print(String(format: "packet=0x%04X payload=%@", packet.commandID, bytes))
+                }
+                return
+            }
+
+            if arguments == ["sound-prerequisites"] {
+                let mode = try await client.soundMode()
+                let prerequisites = try await client.soundPersonalizationPrerequisites()
+                print("sound-mode=\(mode.displayName)")
+                print("compatibility-mode=\(prerequisites.compatibilityMode)")
+                print("profile-state=\(prerequisites.profileState)")
+                return
+            }
+
+            if arguments == ["toggle-sound-mode"] {
+                let before = try await client.soundMode()
+                let desired: MomentumSoundMode = before == .soundPersonalization ? .equalizer : .soundPersonalization
+                let controls = try await client.setAudioMode(desired)
+                print("sound-mode-before=\(before.displayName)")
+                print("sound-mode-after=\(controls.soundMode.displayName)")
+                return
+            }
+
             if arguments == ["set-antiwind-auto"] {
                 let controls = try await client.setAntiWind(.automatic)
                 print("external change: antiWind=\(controls.ancModes.antiWind.rawValue)")

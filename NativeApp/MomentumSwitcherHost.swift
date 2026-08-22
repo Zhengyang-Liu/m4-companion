@@ -1,6 +1,7 @@
 import AppKit
 import MomentumBluetooth
 import MomentumCore
+import OSLog
 import ServiceManagement
 import SwiftUI
 import WidgetKit
@@ -16,6 +17,10 @@ struct MomentumSwitcherHostApp: App {
 
 @MainActor
 final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+    private let logger = Logger(
+        subsystem: "com.zhengyangliu.MomentumDeviceSwitcher",
+        category: "WidgetAction"
+    )
     private let client = MomentumHeadsetClient()
     private let actionToken: String = {
         let cached = (try? MomentumSnapshotStore.loadState())?.actionToken
@@ -28,8 +33,10 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var isSwitching = false
     private var mainWindow: NSWindow?
     private var mainViewModel: MomentumMainViewModel?
+    private var widgetActionQueueWatcher: MomentumWidgetActionQueueWatcher?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        installWidgetActionWatcher()
         if SMAppService.mainApp.status == .notRegistered {
             try? SMAppService.mainApp.register()
         }
@@ -39,6 +46,7 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         refreshTask = Task { [weak self] in
             guard let self else { return }
+            await consumePendingWidgetAction()
             await refresh()
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(15 * 60))
@@ -61,6 +69,7 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        removeWidgetActionWatcher()
         refreshTask?.cancel()
         mainViewModel?.stopAutomaticSync()
     }
@@ -85,6 +94,51 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
     func windowWillClose(_ notification: Notification) {
         mainViewModel?.stopAutomaticSync()
+    }
+
+    private func installWidgetActionWatcher() {
+        guard widgetActionQueueWatcher == nil else { return }
+        do {
+            widgetActionQueueWatcher = try MomentumWidgetActionQueueWatcher(
+                queue: DispatchQueue.main
+            ) { [weak self] in
+                Task { @MainActor [weak self] in
+                    self?.logger.info("Detected queued widget action")
+                    await self?.consumePendingWidgetAction()
+                }
+            }
+            logger.info("Watching widget action queue")
+        } catch {
+            logger.error("Widget action queue watcher failed: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    private func removeWidgetActionWatcher() {
+        widgetActionQueueWatcher?.cancel()
+        widgetActionQueueWatcher = nil
+    }
+
+    fileprivate func consumePendingWidgetAction() async {
+        guard !isSwitching else { return }
+        while !isSwitching,
+              let state = try? MomentumSnapshotStore.loadState() {
+            let requestWasPresent = MomentumWidgetActionStore.hasPendingRequests()
+            guard let request = try? MomentumWidgetActionStore.claimNextAuthorized(
+                expectedToken: actionToken,
+                snapshot: state.snapshot
+            ) else {
+                if requestWasPresent, state.switchingDeviceIndex != nil {
+                    cache(state.snapshot)
+                }
+                return
+            }
+            await performConnectionChange(
+                index: request.deviceIndex,
+                name: request.expectedName,
+                desiredConnected: request.desiredConnected
+            )
+            logger.info("Finished widget action \(request.id.uuidString, privacy: .public)")
+        }
     }
 
     private func showMainWindow() {
@@ -151,19 +205,15 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         if url.host == "open" {
             showMainWindow()
-            return
         }
+    }
 
-        guard !isSwitching,
-              url.host == "toggle",
-              let indexText = components.queryItems?.first(where: { $0.name == "index" })?.value,
-              let index = UInt8(indexText),
-              let name = components.queryItems?.first(where: { $0.name == "name" })?.value,
-              let connectedText = components.queryItems?.first(where: { $0.name == "connected" })?.value,
-              let wasConnected = MomentumConnectedParameter.parse(connectedText) else {
-            return
-        }
-
+    private func performConnectionChange(
+        index: UInt8,
+        name: String,
+        desiredConnected: Bool
+    ) async {
+        guard !isSwitching else { return }
         isSwitching = true
         defer { isSwitching = false }
         if let cached = try? MomentumSnapshotStore.loadState() {
@@ -177,10 +227,10 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
 
         do {
             let snapshot: MomentumSnapshot
-            if wasConnected {
-                snapshot = try await client.disconnectPeer(index: index, expectedName: name)
-            } else {
+            if desiredConnected {
                 snapshot = try await client.switchPeer(to: index, expectedName: name)
+            } else {
+                snapshot = try await client.disconnectPeer(index: index, expectedName: name)
             }
             cache(snapshot)
             mainViewModel?.accept(snapshot: snapshot)

@@ -1,3 +1,4 @@
+import AppIntents
 import MomentumBluetooth
 import MomentumCore
 import SwiftUI
@@ -54,6 +55,67 @@ struct MomentumProvider: TimelineProvider {
 
     private func load(_ completion: @escaping (MomentumEntry) -> Void) {
         completion(MomentumEntry(date: .now, state: try? MomentumSnapshotStore.loadState()))
+    }
+}
+
+struct ToggleMomentumDeviceIntent: AppIntent {
+    static let title: LocalizedStringResource = "Toggle MOMENTUM 4 Device"
+    static let description = IntentDescription("Connects or disconnects a remembered MOMENTUM 4 peer without opening M4 Companion.")
+    static let openAppWhenRun = false
+    static let isDiscoverable = false
+
+    @Parameter(title: "Device index") var deviceIndex: Int
+    @Parameter(title: "Device name") var expectedName: String
+    @Parameter(title: "Desired connection state") var desiredConnected: Bool
+
+    init() {}
+
+    init(device: MomentumDevice) {
+        deviceIndex = Int(device.index)
+        expectedName = device.name
+        desiredConnected = !device.isConnected
+    }
+
+    func perform() async throws -> some IntentResult {
+        guard let index = UInt8(exactly: deviceIndex),
+              let state = try? MomentumSnapshotStore.loadState(),
+              let token = state.actionToken,
+              MomentumActionCapability.isWellFormed(token) else {
+            return .result()
+        }
+        let request = MomentumWidgetActionRequest(
+            deviceIndex: index,
+            expectedName: expectedName,
+            desiredConnected: desiredConnected,
+            actionToken: token
+        )
+        guard MomentumWidgetActionValidator.isAuthorized(
+            request,
+            expectedToken: token,
+            snapshot: state.snapshot
+        ) else {
+            return .result()
+        }
+
+        let switchingState = MomentumWidgetState(
+            snapshot: state.snapshot,
+            switchingDeviceIndex: index,
+            actionToken: token
+        )
+        do {
+            try MomentumSnapshotStore.save(switchingState)
+            try MomentumWidgetActionStore.enqueue(request)
+        } catch {
+            try? MomentumSnapshotStore.save(MomentumWidgetState(
+                snapshot: state.snapshot,
+                actionToken: token
+            ))
+            WidgetCenter.shared.reloadAllTimelines()
+            throw error
+        }
+        WidgetCenter.shared.reloadAllTimelines()
+        MomentumWidgetActionNotification.post()
+        return .result()
     }
 }
 
@@ -140,23 +202,13 @@ struct MomentumWidgetView: View {
         let content = tileContent(device, isSwitching: device.index == switchingIndex)
         if device.index == ownIndex {
             content
-        } else if let actionToken {
-            Link(destination: actionURL(for: device, token: actionToken)) { content }
-                .allowsHitTesting(switchingIndex == nil)
+        } else if MomentumActionCapability.isWellFormed(actionToken) {
+            Button(intent: ToggleMomentumDeviceIntent(device: device)) {
+                content
+            }
+            .buttonStyle(.plain)
+            .allowsHitTesting(switchingIndex == nil)
         }
-    }
-
-    private func actionURL(for device: MomentumDevice, token: String) -> URL {
-        var components = URLComponents()
-        components.scheme = "momentum-switcher"
-        components.host = "toggle"
-        components.queryItems = [
-            URLQueryItem(name: "index", value: String(device.index)),
-            URLQueryItem(name: "connected", value: device.isConnected ? "1" : "0"),
-            URLQueryItem(name: "name", value: device.name),
-            URLQueryItem(name: "token", value: token)
-        ]
-        return components.url!
     }
 
     private func tileContent(_ device: MomentumDevice, isSwitching: Bool) -> some View {

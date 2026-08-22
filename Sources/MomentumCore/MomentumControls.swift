@@ -1,5 +1,35 @@
 import Foundation
 
+public enum MomentumSoundMode: UInt8, Codable, CaseIterable, Sendable {
+    case equalizer = 1
+    case soundPersonalization = 3
+
+    public var displayName: String {
+        switch self {
+        case .equalizer: "Equalizer"
+        case .soundPersonalization: "Sound Personalization"
+        }
+    }
+}
+
+public enum MomentumBluetoothCompatibilityMode: UInt8, Codable, Sendable {
+    case betterAudio = 0
+    case betterCompatibility = 1
+}
+
+public enum MomentumSoundPersonalizationProfileState: UInt8, Codable, Sendable {
+    case notParameterized = 0
+    case calibrating = 1
+    case calibrated = 2
+    case activationInhibited = 3
+}
+
+public enum MomentumSoundModeTransitionPolicy {
+    public static func reached(desired: MomentumSoundMode, readback: MomentumSoundMode) -> Bool {
+        desired == readback
+    }
+}
+
 public enum MomentumAntiWind: UInt8, Codable, CaseIterable, Sendable {
     case off = 0
     case maximum = 1
@@ -48,6 +78,7 @@ public struct MomentumEqBand: Equatable, Codable, Identifiable, Sendable {
 }
 
 public struct MomentumControlsSnapshot: Equatable, Codable, Sendable {
+    public let soundMode: MomentumSoundMode
     public let ancEnabled: Bool
     public let ancModes: MomentumAncModes
     public let transparencyLevel: UInt8
@@ -57,6 +88,7 @@ public struct MomentumControlsSnapshot: Equatable, Codable, Sendable {
     public let bassBoostEnabled: Bool
 
     public init(
+        soundMode: MomentumSoundMode = .equalizer,
         ancEnabled: Bool,
         ancModes: MomentumAncModes,
         transparencyLevel: UInt8,
@@ -65,6 +97,7 @@ public struct MomentumControlsSnapshot: Equatable, Codable, Sendable {
         eqBands: [MomentumEqBand],
         bassBoostEnabled: Bool
     ) {
+        self.soundMode = soundMode
         self.ancEnabled = ancEnabled
         self.ancModes = ancModes
         self.transparencyLevel = transparencyLevel
@@ -107,6 +140,65 @@ public struct MomentumEQPreset: Equatable, Identifiable, Sendable {
 
     public static func available(forBandCount count: Int) -> [MomentumEQPreset] {
         count == 5 ? momentum4FiveBand : []
+    }
+}
+
+public struct MomentumUserEQProfile: Codable, Equatable, Identifiable, Sendable {
+    public let id: UUID
+    public let name: String
+    public let gainsDB: [Double]
+
+    public init(id: UUID = UUID(), name: String, gainsDB: [Double]) {
+        self.id = id
+        self.name = name
+        self.gainsDB = gainsDB
+    }
+}
+
+public struct MomentumEQProfileChoice: Equatable, Identifiable, Sendable {
+    public let id: String
+    public let name: String
+    public let gainsDB: [Double]
+    public let userProfileID: UUID?
+
+    public var isUserDefined: Bool { userProfileID != nil }
+}
+
+public enum MomentumUserEQProfileError: Error, Equatable {
+    case invalidName
+}
+
+public enum MomentumUserEQProfilePolicy {
+    public static func saving(
+        _ profile: MomentumUserEQProfile,
+        in existing: [MomentumUserEQProfile]
+    ) throws -> [MomentumUserEQProfile] {
+        let name = profile.name.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !name.isEmpty else { throw MomentumUserEQProfileError.invalidName }
+        let saved = MomentumUserEQProfile(id: profile.id, name: name, gainsDB: profile.gainsDB)
+        let others = existing.filter { $0.name.caseInsensitiveCompare(name) != .orderedSame }
+        return [saved] + others
+    }
+
+    public static func userFirst(
+        userProfiles: [MomentumUserEQProfile],
+        builtInProfiles: [MomentumEQPreset]
+    ) -> [MomentumEQProfileChoice] {
+        userProfiles.map {
+            MomentumEQProfileChoice(
+                id: "user-\($0.id.uuidString)",
+                name: $0.name,
+                gainsDB: $0.gainsDB,
+                userProfileID: $0.id
+            )
+        } + builtInProfiles.map {
+            MomentumEQProfileChoice(
+                id: "built-in-\($0.name)",
+                name: $0.name,
+                gainsDB: $0.gainsDB,
+                userProfileID: nil
+            )
+        }
     }
 }
 
@@ -172,6 +264,22 @@ public enum MomentumLaunchPolicy {
     public static let shouldKeepDockIconAfterWindowCloses = true
 }
 
+public enum MomentumCustomANCLevelPolicy {
+    public static func updatedRememberedLevel(
+        current: Int?,
+        ancEnabled: Bool,
+        adaptiveEnabled: Bool,
+        reportedLevel: UInt8
+    ) -> Int? {
+        guard ancEnabled, !adaptiveEnabled else { return current }
+        return Int(reportedLevel)
+    }
+
+    public static func levelToRestore(remembered: Int?, fallback: Double) -> Int {
+        min(100, max(0, remembered ?? Int(fallback.rounded())))
+    }
+}
+
 public enum MomentumNoiseControlMode: String, CaseIterable, Identifiable, Sendable {
     case adaptive = "Adaptive"
     case custom = "Custom"
@@ -233,6 +341,42 @@ public enum MomentumControlPresentation {
 }
 
 public enum MomentumControlCodec {
+    public static func parseSoundPersonalizationProfileState(
+        _ payload: Data
+    ) throws -> MomentumSoundPersonalizationProfileState {
+        guard payload.count == 1,
+              let state = MomentumSoundPersonalizationProfileState(rawValue: payload[0]) else {
+            throw MomentumProtocolError.malformedControlPayload(
+                command: MomentumCommands.getSoundPersonalizationProfileState
+            )
+        }
+        return state
+    }
+
+    public static func parseBluetoothCompatibilityMode(
+        _ payload: Data
+    ) throws -> MomentumBluetoothCompatibilityMode {
+        guard payload.count == 1,
+              let mode = MomentumBluetoothCompatibilityMode(rawValue: payload[0]) else {
+            throw MomentumProtocolError.malformedControlPayload(
+                command: MomentumCommands.getBluetoothCompatibilityMode
+            )
+        }
+        return mode
+    }
+
+    public static func encodeAudioMode(_ mode: MomentumSoundMode) -> Data {
+        Data([0, mode.rawValue])
+    }
+
+    public static func parseSoundMode(_ payload: Data) throws -> MomentumSoundMode {
+        guard payload.count == 2, payload[0] == 0,
+              let mode = MomentumSoundMode(rawValue: payload[1]) else {
+            throw MomentumProtocolError.malformedControlPayload(command: MomentumCommands.getSoundMode)
+        }
+        return mode
+    }
+
     public static func validateWriteResponse(command: UInt16, response: GaiaPacket) throws {
         let success = command | 0x0100
         let failure = success | 0x0080
@@ -370,6 +514,15 @@ public enum MomentumControlPlan {
         MomentumControlWrite(command: MomentumCommands.setAncEnabled, payload: MomentumControlCodec.encodeBoolean(true)),
         MomentumControlWrite(command: MomentumCommands.setAncMode, payload: Data([MomentumAncMode.adaptive.rawValue, 0]))
     ]
+
+    public static func customModeRestoring(level: Int) -> [MomentumControlWrite] {
+        customMode + [
+            MomentumControlWrite(
+                command: MomentumCommands.setTransparencyLevel,
+                payload: MomentumControlCodec.encodeTransparencyLevel(level)
+            )
+        ]
+    }
 
     public static func transparency(level: Int) -> [MomentumControlWrite] {
         [

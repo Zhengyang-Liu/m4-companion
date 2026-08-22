@@ -1,9 +1,13 @@
+import Foundation
 import MomentumBluetooth
 import MomentumCore
 import SwiftUI
 
 @MainActor
 final class MomentumMainViewModel: ObservableObject {
+    private static let rememberedCustomANCLevelKey = "rememberedCustomANCLevel"
+    private static let userEQProfilesKey = "userEQProfiles.v1"
+
     @Published private(set) var snapshot: MomentumSnapshot?
     @Published private(set) var controls: MomentumControlsSnapshot?
     @Published private(set) var isLoading = false
@@ -12,10 +16,12 @@ final class MomentumMainViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     @Published var ancEnabled = false
+    @Published private(set) var soundMode: MomentumSoundMode = .equalizer
     @Published var adaptiveEnabled = false
     @Published var antiWind: MomentumAntiWind = .automatic
     @Published var transparencyLevel = 0.0
     @Published var eqGains: [Double] = []
+    @Published private(set) var userEQProfiles: [MomentumUserEQProfile] = []
     @Published var bassBoostEnabled = false
 
     private let client: MomentumHeadsetClient
@@ -27,6 +33,7 @@ final class MomentumMainViewModel: ObservableObject {
     private var automaticSyncTask: Task<Void, Never>?
     private var interactionGeneration = 0
     private var activeDeferredControl: String?
+    private var rememberedCustomANCLevel: Int?
 
     init(
         client: MomentumHeadsetClient,
@@ -34,6 +41,18 @@ final class MomentumMainViewModel: ObservableObject {
     ) {
         self.client = client
         self.cacheSnapshot = cacheSnapshot
+        if let stored = UserDefaults.standard.object(
+            forKey: Self.rememberedCustomANCLevelKey
+        ) as? NSNumber {
+            let level = stored.intValue
+            if (0...100).contains(level) {
+                rememberedCustomANCLevel = level
+            }
+        }
+        if let data = UserDefaults.standard.data(forKey: Self.userEQProfilesKey),
+           let profiles = try? JSONDecoder().decode([MomentumUserEQProfile].self, from: data) {
+            userEQProfiles = profiles
+        }
         if let cached = try? MomentumSnapshotStore.load() {
             snapshot = cached
         }
@@ -41,6 +60,10 @@ final class MomentumMainViewModel: ObservableObject {
 
     var isBusy: Bool {
         isLoading || busyAction != nil || activeDeferredWrites > 0
+    }
+
+    var isEqualizerActive: Bool {
+        controls != nil && soundMode == .equalizer
     }
 
     var orderedDevices: [MomentumDevice] {
@@ -57,12 +80,24 @@ final class MomentumMainViewModel: ObservableObject {
         return config.minimumGainDB...config.maximumGainDB
     }
 
-    var availablePresets: [MomentumEQPreset] {
-        MomentumEQPreset.available(forBandCount: eqGains.count)
+    var availableProfiles: [MomentumEQProfileChoice] {
+        guard !eqGains.isEmpty else { return [] }
+        let builtIns = [
+            MomentumEQPreset(
+                name: "Flat",
+                gainsDB: MomentumControlPresentation.flatGains(bandCount: eqGains.count)
+            )
+        ] + MomentumEQPreset.available(forBandCount: eqGains.count)
+        return MomentumUserEQProfilePolicy.userFirst(
+            userProfiles: userEQProfiles.filter { $0.gainsDB.count == eqGains.count },
+            builtInProfiles: builtIns
+        )
     }
 
     func canEditDeferredControl(_ controlID: String) -> Bool {
-        !isLoading
+        let soundModeAllowsEditing = !controlID.hasPrefix("eq-") || isEqualizerActive
+        return soundModeAllowsEditing
+            && !isLoading
             && busyAction == nil
             && MomentumDeferredWritePolicy.acceptsDraft(
                 activeControl: activeDeferredControl,
@@ -170,14 +205,21 @@ final class MomentumMainViewModel: ObservableObject {
     }
 
     func setAdaptive(_ enabled: Bool) {
+        let levelToRestore = MomentumCustomANCLevelPolicy.levelToRestore(
+            remembered: rememberedCustomANCLevel,
+            fallback: transparencyLevel
+        )
         runControl(action: "mode", optimistic: {
             adaptiveEnabled = enabled
             ancEnabled = true
+            if !enabled {
+                transparencyLevel = Double(levelToRestore)
+            }
         }) {
             if enabled {
                 return try await self.client.setAdaptiveEnabled(true)
             }
-            return try await self.client.setCustomMode()
+            return try await self.client.setCustomMode(restoringLevel: levelToRestore)
         }
     }
 
@@ -203,6 +245,13 @@ final class MomentumMainViewModel: ObservableObject {
         }
     }
 
+    func setSoundMode(_ mode: MomentumSoundMode) {
+        guard mode != soundMode else { return }
+        runControl(action: "sound-mode", optimistic: { soundMode = mode }) {
+            try await self.client.setAudioMode(mode)
+        }
+    }
+
     func setBassBoost(_ enabled: Bool) {
         runControl(action: "bass-boost", optimistic: { bassBoostEnabled = enabled }) {
             try await self.client.setBassBoost(enabled)
@@ -220,6 +269,9 @@ final class MomentumMainViewModel: ObservableObject {
         interactionGeneration += 1
         let clamped = min(100, max(0, value))
         transparencyLevel = clamped
+        if ancEnabled, !adaptiveEnabled {
+            rememberCustomANCLevel(Int(clamped.rounded()))
+        }
         transparencyGeneration += 1
         let generation = transparencyGeneration
         transparencyTask?.cancel()
@@ -253,7 +305,8 @@ final class MomentumMainViewModel: ObservableObject {
 
     func setEqDraft(index: Int, gain: Double) {
         let controlID = "eq-\(index)"
-        guard busyAction == nil,
+        guard isEqualizerActive,
+              busyAction == nil,
               !isLoading,
               MomentumDeferredWritePolicy.acceptsDraft(
                   activeControl: activeDeferredControl,
@@ -302,12 +355,41 @@ final class MomentumMainViewModel: ObservableObject {
         )
     }
 
-    func applyEQPreset(_ preset: MomentumEQPreset) {
-        applyEQPreset(named: preset.name, gains: preset.gainsDB)
+    func applyEQProfile(_ profile: MomentumEQProfileChoice) {
+        applyEQPreset(named: profile.name, gains: profile.gainsDB)
+    }
+
+    func saveCurrentEQProfile(named name: String) {
+        guard isEqualizerActive, !eqGains.isEmpty else { return }
+        do {
+            userEQProfiles = try MomentumUserEQProfilePolicy.saving(
+                MomentumUserEQProfile(name: name, gainsDB: eqGains),
+                in: userEQProfiles
+            )
+            persistUserEQProfiles()
+        } catch MomentumUserEQProfileError.invalidName {
+            errorMessage = "Enter a name for the EQ profile."
+        } catch {
+            errorMessage = "Could not save the EQ profile."
+        }
+    }
+
+    func deleteUserEQProfile(id: UUID) {
+        userEQProfiles.removeAll { $0.id == id }
+        persistUserEQProfiles()
+    }
+
+    private func persistUserEQProfiles() {
+        guard let data = try? JSONEncoder().encode(userEQProfiles) else {
+            errorMessage = "Could not save the EQ profiles."
+            return
+        }
+        UserDefaults.standard.set(data, forKey: Self.userEQProfilesKey)
     }
 
     private func applyEQPreset(named name: String, gains: [Double]) {
-        guard !isLoading,
+        guard isEqualizerActive,
+              !isLoading,
               busyAction == nil,
               activeDeferredWrites == 0,
               !gains.isEmpty,
@@ -349,6 +431,16 @@ final class MomentumMainViewModel: ObservableObject {
 
     private func apply(_ snapshot: MomentumControlsSnapshot) {
         controls = snapshot
+        soundMode = snapshot.soundMode
+        let updatedCustomLevel = MomentumCustomANCLevelPolicy.updatedRememberedLevel(
+            current: rememberedCustomANCLevel,
+            ancEnabled: snapshot.ancEnabled,
+            adaptiveEnabled: snapshot.ancModes.adaptiveEnabled,
+            reportedLevel: snapshot.transparencyLevel
+        )
+        if updatedCustomLevel != rememberedCustomANCLevel, let updatedCustomLevel {
+            rememberCustomANCLevel(updatedCustomLevel)
+        }
         ancEnabled = snapshot.ancEnabled
         adaptiveEnabled = snapshot.ancModes.adaptiveEnabled
         antiWind = snapshot.ancModes.antiWind
@@ -358,6 +450,12 @@ final class MomentumMainViewModel: ObservableObject {
             bands: snapshot.eqBands
         )
         bassBoostEnabled = snapshot.bassBoostEnabled
+    }
+
+    private func rememberCustomANCLevel(_ level: Int) {
+        let clamped = min(100, max(0, level))
+        rememberedCustomANCLevel = clamped
+        UserDefaults.standard.set(clamped, forKey: Self.rememberedCustomANCLevelKey)
     }
 
     private func optimisticSnapshot(for device: MomentumDevice, in current: MomentumSnapshot) -> MomentumSnapshot {
@@ -425,6 +523,8 @@ final class MomentumMainViewModel: ObservableObject {
 
 struct MomentumMainView: View {
     @ObservedObject var model: MomentumMainViewModel
+    @State private var showingSaveEQProfile = false
+    @State private var newEQProfileName = ""
 
     private let accent = Color(red: 1.0, green: 0.38, blue: 0.05)
     private let pageBackground = Color(red: 0.07, green: 0.07, blue: 0.075)
@@ -456,6 +556,20 @@ struct MomentumMainView: View {
         .frame(minWidth: 420, idealWidth: 440, minHeight: 560, idealHeight: 700)
         .preferredColorScheme(.dark)
         .tint(accent)
+        .alert("Save EQ Profile", isPresented: $showingSaveEQProfile) {
+            TextField("Profile name", text: $newEQProfileName)
+            Button("Cancel", role: .cancel) {
+                newEQProfileName = ""
+            }
+            Button("Save") {
+                model.saveCurrentEQProfile(named: newEQProfileName)
+                newEQProfileName = ""
+            }
+            .disabled(newEQProfileName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty)
+        } message: {
+            Text("Save the current EQ settings as a reusable profile.")
+        }
+
     }
 
     private var header: some View {
@@ -591,19 +705,56 @@ struct MomentumMainView: View {
     }
 
     private var equalizerCard: some View {
-        card(title: "Equalizer", symbol: "slider.vertical.3") {
+        card(title: "Sound Mode", symbol: "slider.vertical.3") {
             VStack(spacing: 14) {
+                Picker("Sound Mode", selection: Binding(
+                    get: { model.soundMode },
+                    set: { model.setSoundMode($0) }
+                )) {
+                    Text("Equalizer").tag(MomentumSoundMode.equalizer)
+                    Text("Sound Personalization").tag(MomentumSoundMode.soundPersonalization)
+                }
+                .pickerStyle(.segmented)
+                .labelsHidden()
+                .disabled(model.isBusy || model.controls == nil)
+
+                if model.soundMode == .soundPersonalization {
+                    Text("Turn Sound Personalization on or off here. Create or fine-tune your personalized profile in the Sennheiser Smart Control app on your phone.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
+
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 7) {
-                        Button("Flat") { model.resetEQ() }
-                            .buttonStyle(.bordered)
-                        ForEach(model.availablePresets) { preset in
-                            Button(preset.name) { model.applyEQPreset(preset) }
+                        Button {
+                            showingSaveEQProfile = true
+                        } label: {
+                            Label("Save", systemImage: "plus")
+                        }
+                        .buttonStyle(.bordered)
+                        ForEach(model.availableProfiles) { profile in
+                            Button(profile.name) { model.applyEQProfile(profile) }
                                 .buttonStyle(.bordered)
+                                .contextMenu {
+                                    if let id = profile.userProfileID {
+                                        Button("Delete Profile", role: .destructive) {
+                                            model.deleteUserEQProfile(id: id)
+                                        }
+                                    }
+                                }
                         }
                     }
                 }
-                .disabled(model.isBusy || model.eqGains.isEmpty)
+                .disabled(model.isBusy || model.eqGains.isEmpty || !model.isEqualizerActive)
+                .opacity(model.isEqualizerActive ? 1 : 0.45)
+
+                if !model.userEQProfiles.isEmpty {
+                    Text("Right-click a saved profile to delete it.")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
                 if model.eqGains.isEmpty {
                     Text(model.controls == nil ? "Equalizer unavailable" : "No EQ bands reported")
@@ -622,6 +773,8 @@ struct MomentumMainView: View {
                         }
                     }
                     .frame(maxWidth: .infinity)
+                    .disabled(!model.isEqualizerActive)
+                    .opacity(model.isEqualizerActive ? 1 : 0.45)
                 }
 
                 Divider().opacity(0.4)
@@ -630,7 +783,8 @@ struct MomentumMainView: View {
                         get: { model.bassBoostEnabled },
                         set: { model.setBassBoost($0) }
                     ))
-                    .disabled(model.isBusy || model.controls == nil)
+                    .disabled(model.isBusy || model.controls == nil || !model.isEqualizerActive)
+                    .opacity(model.isEqualizerActive ? 1 : 0.45)
                     Spacer()
                 }
             }
