@@ -3,182 +3,150 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="description" content="M4 Companion is an unofficial, open-source macOS companion for Sennheiser MOMENTUM 4 headphones.">
-  <meta name="theme-color" content="#0a0a0b">
+  <meta name="description" content="M4 Companion is a small, open-source macOS app for controlling Sennheiser MOMENTUM 4 headphones.">
+  <meta name="theme-color" content="#f7f7f8">
   <title>M4 Companion — MOMENTUM 4 controls for macOS</title>
   <link rel="icon" type="image/png" href="assets/favicon.png">
   <link rel="stylesheet" href="assets/site.css">
-  <script src="assets/site.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to content</a>
 
-  <header class="site-header" data-header>
-    <a class="brand" href="#top" aria-label="M4 Companion home">
-      <img src="assets/favicon.png" width="32" height="32" alt="">
-      <span>M4 Companion</span>
-    </a>
-    <nav aria-label="Primary navigation">
-      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
-        <span>Menu</span><i aria-hidden="true"></i>
-      </button>
-      <div class="nav-links" id="nav-links">
-        <a href="#controls">Controls</a>
-        <a href="#details">Details</a>
+  <header class="site-header">
+    <div class="shell header-inner">
+      <a class="brand" href="#top" aria-label="M4 Companion home">
+        <img src="assets/favicon.png" width="30" height="30" alt="">
+        <span>M4 Companion</span>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#features">Features</a>
         <a href="#install">Install</a>
-        <a class="nav-source" href="https://github.com/Zhengyang-Liu/m4-companion">View source <span aria-hidden="true">↗</span></a>
-      </div>
-    </nav>
+        <a href="https://github.com/Zhengyang-Liu/m4-companion">GitHub <span aria-hidden="true">↗</span></a>
+      </nav>
+    </div>
   </header>
 
   <main id="main">
-    <section class="hero" id="top" aria-labelledby="hero-title">
+    <section class="hero shell" id="top">
       <div class="hero-copy">
-        <p class="eyebrow"><span></span> macOS companion · v0.1.0 Technical Preview</p>
-        <h1 id="hero-title">Your M4,<br><em>within reach.</em></h1>
-        <p class="hero-lede">Switch devices, tune noise control, and shape your sound without reaching for your phone.</p>
-        <div class="hero-actions">
-          <a class="button button-primary" href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Download for macOS <span aria-hidden="true">↓</span></a>
-          <a class="text-link" href="#controls">See what it controls <span aria-hidden="true">↘</span></a>
+        <p class="label">Open source · v0.1.0 Technical Preview</p>
+        <h1>Control your MOMENTUM 4 from your Mac.</h1>
+        <p class="lede">Switch multipoint devices, adjust noise control and EQ, and keep useful controls on your desktop with a WidgetKit widget.</p>
+        <div class="actions">
+          <a class="button primary" href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Download for macOS</a>
+          <a class="button secondary" href="https://github.com/Zhengyang-Liu/m4-companion">View source</a>
         </div>
-        <p class="compatibility">Requires macOS 14 or later · Sennheiser MOMENTUM 4</p>
+        <p class="requirements">Requires macOS 14 or later · MOMENTUM 4 only</p>
       </div>
 
-      <div class="hero-art" aria-hidden="true">
-        <div class="signal signal-a"></div>
-        <div class="signal signal-b"></div>
-        <div class="signal signal-c"></div>
-        <div class="icon-stage">
-          <img src="assets/app-icon.png" alt="" width="1024" height="1024">
+      <div class="product-preview" aria-label="M4 Companion app and desktop widget">
+        <div class="app-window">
+          <img src="assets/app-main.png" width="840" height="1184" alt="M4 Companion noise control and five-band equalizer interface.">
         </div>
-        <div class="status-chip"><i></i> M4 connected</div>
-      </div>
-    </section>
-
-    <section class="preview" id="controls" aria-labelledby="preview-title">
-      <div class="section-heading">
-        <p class="kicker">One native control surface</p>
-        <h2 id="preview-title">Less menu diving.<br>More listening.</h2>
-        <p>Fine-grained control in a focused macOS app, designed to feel at home on your desktop.</p>
-      </div>
-
-      <div class="preview-stage">
-        <div class="preview-label label-top"><span>01</span> Noise control</div>
-        <figure class="app-shot">
-          <img src="assets/app-main.png" width="840" height="1184" alt="M4 Companion showing adaptive, custom, and off noise-control modes, anti-wind options, five equalizer bands, presets, and Bass Boost.">
-          <figcaption>UI example from the Technical Preview. Appearance may change before release.</figcaption>
-        </figure>
-        <div class="preview-label label-bottom"><span>02</span> Five-band EQ</div>
+        <div class="widget-window">
+          <img src="assets/widget.png" width="692" height="346" alt="MOMENTUM 4 desktop widget showing battery and connected devices.">
+        </div>
       </div>
     </section>
 
-    <section class="control-story" aria-label="Product capabilities">
-      <article class="story-row devices">
-        <div class="story-number">01 / 03</div>
-        <div class="story-copy">
-          <p class="kicker">Device switching</p>
-          <h2>Move the connection,<br>not your attention.</h2>
-          <p>See remembered devices and hand an active connection from one to another. Phone-side changes are read back and reflected on your Mac, so both stay in step.</p>
-        </div>
-        <div class="device-demo" aria-label="Illustration of switching between a MacBook and an iPhone">
-          <div class="demo-device active"><span class="device-glyph laptop" aria-hidden="true"></span><div><b>MacBook Pro</b><small>Connected</small></div><i></i></div>
-          <div class="route"><span></span></div>
-          <div class="demo-device"><span class="device-glyph phone" aria-hidden="true"></span><div><b>iPhone</b><small>Available</small></div><i></i></div>
-        </div>
-      </article>
+    <div class="facts shell" aria-label="Project details">
+      <span>Native macOS app</span>
+      <span>Local Bluetooth connection</span>
+      <span>No account or analytics</span>
+      <span>MIT licensed</span>
+    </div>
 
-      <article class="story-row sound">
-        <div class="story-number">02 / 03</div>
-        <div class="story-copy">
-          <p class="kicker">Noise control</p>
-          <h2>Quiet, precisely<br>where you want it.</h2>
-          <p>Choose Adaptive, Custom, or Off. Blend toward transparency with a direct slider, then set anti-wind to Off, Max, or Auto.</p>
-        </div>
-        <div class="control-demo" aria-hidden="true">
-          <div class="mode-tabs"><b>Adaptive</b><span>Custom</span><span>Off</span></div>
-          <div class="scale-labels"><span>ANC</span><span>Transparency</span></div>
-          <div class="scale"><i></i><b></b></div>
-          <div class="wind"><small>ANTI-WIND</small><div><span>Off</span><span>Max</span><b>Auto</b></div></div>
-        </div>
-      </article>
-
-      <article class="story-row eq">
-        <div class="story-number">03 / 03</div>
-        <div class="story-copy">
-          <p class="kicker">Sound shaping</p>
-          <h2>Five bands.<br>Your signature.</h2>
-          <p>Adjust the 5-band equalizer, jump to a preset, or add Bass Boost. Desktop widgets keep useful status and actions visible beyond the main window.</p>
-        </div>
-        <div class="eq-demo" aria-label="Illustration of a five-band equalizer">
-          <div class="eq-preset"><span>Flat</span><b>Bass Boost&nbsp; On</b></div>
-          <div class="bars" aria-hidden="true">
-            <i style="--level:66%"><b></b><small>63</small></i>
-            <i style="--level:48%"><b></b><small>250</small></i>
-            <i style="--level:57%"><b></b><small>1K</small></i>
-            <i style="--level:42%"><b></b><small>4K</small></i>
-            <i style="--level:61%"><b></b><small>8K</small></i>
-          </div>
-        </div>
-      </article>
-    </section>
-
-    <section class="details" id="details" aria-labelledby="details-title">
-      <div class="details-heading">
-        <p class="kicker">Built to be a companion</p>
-        <h2 id="details-title">Small footprint.<br>Clear boundaries.</h2>
-      </div>
-      <dl class="details-list">
-        <div><dt>Works with</dt><dd>Sennheiser MOMENTUM 4</dd></div>
-        <div><dt>Requires</dt><dd>macOS 14 Sonoma or later</dd></div>
-        <div><dt>Privacy</dt><dd>Local-only. No account, cloud service, or analytics.</dd></div>
-        <div><dt>Source</dt><dd>Open source on <a href="https://github.com/Zhengyang-Liu/m4-companion">GitHub <span aria-hidden="true">↗</span></a></dd></div>
-      </dl>
-    </section>
-
-    <section class="install" id="install" aria-labelledby="install-title">
-      <div class="install-intro">
-        <p class="kicker">Technical Preview</p>
-        <h2 id="install-title">Install with<br>your eyes open.</h2>
-        <p>This preview is ad-hoc signed and not notarized by Apple. macOS may block the first launch. Review the source and proceed only if you are comfortable testing pre-release software.</p>
-        <a class="button button-primary" href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Get v0.1.0 <span aria-hidden="true">↓</span></a>
+    <section class="section shell" id="features">
+      <div class="section-intro">
+        <p class="label">Features</p>
+        <h2>The controls I wanted on my Mac.</h2>
+        <p>M4 Companion is a small personal project. It focuses on a few everyday MOMENTUM 4 controls rather than trying to replace the phone app.</p>
       </div>
 
-      <div class="install-steps">
-        <ol>
-          <li><span>01</span><div><h3>Download and mount</h3><p>Download the DMG from GitHub Releases, open it, and drag M4 Companion to Applications.</p></div></li>
-          <li><span>02</span><div><h3>Open explicitly</h3><p>In Applications, Control-click or right-click M4 Companion, choose <strong>Open</strong>, then confirm <strong>Open</strong>.</p></div></li>
-          <li><span>03</span><div><h3>If macOS still blocks it</h3><p>Open <strong>System Settings → Privacy &amp; Security</strong>, find the blocked-app notice, and choose <strong>Open Anyway</strong>.</p></div></li>
-        </ol>
-
-        <details>
-          <summary>Optional Terminal method <span aria-hidden="true">+</span></summary>
-          <div class="terminal-block">
-            <div class="terminal-bar"><i></i><i></i><i></i><span>Terminal</span></div>
-            <code>xattr -dr com.apple.quarantine "/Applications/M4 Companion.app"</code>
-            <button class="copy-button" type="button" data-copy='xattr -dr com.apple.quarantine "/Applications/M4 Companion.app"'>Copy</button>
-          </div>
-          <p>Only remove quarantine after you have verified the download and trust its source.</p>
-        </details>
+      <div class="feature-list">
+        <article>
+          <h3>Multipoint switching</h3>
+          <p>See remembered devices, check which ones are connected, and switch the second connection while keeping your Mac attached.</p>
+        </article>
+        <article>
+          <h3>Noise control</h3>
+          <p>Choose Adaptive, Custom, or Off. Adjust transparency and set Anti-Wind to Off, Max, or Auto.</p>
+        </article>
+        <article>
+          <h3>Equalizer</h3>
+          <p>Adjust the five-band EQ, select a preset, reset to Flat, or toggle Bass Boost.</p>
+        </article>
+        <article>
+          <h3>Desktop widgets</h3>
+          <p>Add a medium or large MOMENTUM 4 widget for battery, device status, and quick switching.</p>
+        </article>
+        <article>
+          <h3>State sync</h3>
+          <p>While the Mac app is open, settings changed from the phone app are read back from the headset.</p>
+        </article>
+        <article>
+          <h3>Local and open source</h3>
+          <p>No account, cloud backend, telemetry, or analytics. The source is available on GitHub under the MIT License.</p>
+        </article>
       </div>
     </section>
 
-    <section class="closing" aria-labelledby="closing-title">
-      <p class="kicker">Open source · local-first</p>
-      <h2 id="closing-title">Keep the phone<br>in your pocket.</h2>
-      <div class="closing-actions">
-        <a class="button button-primary" href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Download Technical Preview <span aria-hidden="true">↓</span></a>
-        <a class="button button-secondary" href="https://github.com/Zhengyang-Liu/m4-companion">Explore the source <span aria-hidden="true">↗</span></a>
+    <section class="widget-section">
+      <div class="shell widget-inner">
+        <div>
+          <p class="label">WidgetKit</p>
+          <h2>Useful status on the desktop.</h2>
+          <p>The widget reads a local snapshot written by the host app. It does not connect to the headset directly.</p>
+          <p class="muted">In the widget gallery, search for <strong>MOMENTUM 4</strong>.</p>
+        </div>
+        <img src="assets/widget.png" width="692" height="346" alt="Medium MOMENTUM 4 desktop widget.">
       </div>
+    </section>
+
+    <section class="section shell install" id="install">
+      <div class="section-intro">
+        <p class="label">Installation</p>
+        <h2>Install the Technical Preview.</h2>
+        <p>The current build is ad-hoc signed and not notarized by Apple. macOS may ask you to confirm the first launch.</p>
+      </div>
+
+      <ol class="steps">
+        <li>
+          <span>1</span>
+          <div><h3>Download the DMG</h3><p>Get the latest Technical Preview from GitHub Releases.</p></div>
+        </li>
+        <li>
+          <span>2</span>
+          <div><h3>Move it to Applications</h3><p>Open the DMG and drag <strong>M4 Companion.app</strong> into <strong>Applications</strong>. Do not run it directly from the disk image.</p></div>
+        </li>
+        <li>
+          <span>3</span>
+          <div><h3>Open it explicitly</h3><p>In Applications, right-click M4 Companion and choose <strong>Open</strong>. If needed, use <strong>System Settings → Privacy &amp; Security → Open Anyway</strong>.</p></div>
+        </li>
+      </ol>
+
+      <div class="install-note">
+        <p><strong>Optional Terminal method</strong></p>
+        <code>xattr -dr com.apple.quarantine "/Applications/M4 Companion.app"</code>
+        <p>Only run this after verifying that you downloaded the app from this project's GitHub Release.</p>
+      </div>
+
+      <a class="button primary" href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Download v0.1.0</a>
     </section>
   </main>
 
   <footer>
-    <a class="brand" href="#top" aria-label="Back to top">
-      <img src="assets/favicon.png" width="28" height="28" alt="">
-      <span>M4 Companion</span>
-    </a>
-    <p>M4 Companion is an independent, unofficial open-source project. It is not affiliated with, endorsed by, or supported by Sennheiser. Sennheiser and MOMENTUM are trademarks of their respective owner.</p>
-    <div><a href="https://github.com/Zhengyang-Liu/m4-companion">GitHub</a><a href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Download</a></div>
+    <div class="shell footer-inner">
+      <div class="footer-brand">
+        <img src="assets/favicon.png" width="26" height="26" alt="">
+        <strong>M4 Companion</strong>
+      </div>
+      <p>An independent, unofficial open-source project. Not affiliated with or endorsed by Sennheiser or Sonova.</p>
+      <div class="footer-links">
+        <a href="https://github.com/Zhengyang-Liu/m4-companion">GitHub</a>
+        <a href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Releases</a>
+      </div>
+    </div>
   </footer>
 </body>
 </html>
