@@ -1,0 +1,23 @@
+# SwiftPM / Xcode build products
+.build/
+.release-build/
+build/
+dist/
+DerivedData/
+
+# Per-user Xcode state
+*.xcuserstate
+xcuserdata/
+*.xccheckout
+*.xcscmblueprint
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Local tooling and temporary files
+.hermes/
+*.log
+*.dmg
+*.zip

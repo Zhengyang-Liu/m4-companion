@@ -1,0 +1,799 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		096454759E1CB55E48ED92C9 /* MomentumBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A8081C0BEA20B31923C364 /* MomentumBluetooth.framework */; };
+		1054EA4055102DE06CA23F88 /* MomentumBluetooth.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 72A8081C0BEA20B31923C364 /* MomentumBluetooth.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		137BC7565C43D812161BE0FB /* MomentumControls.swift in Sources */ = {isa = PBXBuildFile; fileRef = C33E20BC180C989D9AB695E9 /* MomentumControls.swift */; };
+		14412D33AA1787D572473C14 /* MomentumDeviceWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1A875F7901DFEE99D40DE868 /* MomentumDeviceWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		237CA457BD2A244AC4CA38A8 /* ServiceManagement.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 76B9C792398729D8A37CFEB9 /* ServiceManagement.framework */; };
+		25AA82DA8C60C33D98475D9A /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF75AA8616653B7C57392D8B /* WidgetKit.framework */; };
+		274668C3D011A1775D5CC4B3 /* MomentumHeadsetClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1073BCA278996FCC55ED20 /* MomentumHeadsetClient.swift */; };
+		2765846CB96B1EB5A5AC36A8 /* RFCOMMMomentumTransport.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DFF51F5D85C080D8E8EFDB /* RFCOMMMomentumTransport.swift */; };
+		2800522F57DEEF2EE05B729E /* MomentumWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = C384B0FB24BAF81DD885BC9C /* MomentumWidget.swift */; };
+		2EF4F7D725AC618AEEC770DA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1232F83B3898484FB36670F4 /* SwiftUI.framework */; };
+		38DE5C5A973967B203950CA7 /* IOBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C08EF1597FF6C65700CE8B06 /* IOBluetooth.framework */; };
+		44F1669F812E47ABFA3D9AE2 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1232F83B3898484FB36670F4 /* SwiftUI.framework */; };
+		45D74E877058851393D211C6 /* MomentumSwitcherHost.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C7D938530F4045B913BDCF9 /* MomentumSwitcherHost.swift */; };
+		4B7E2D50AC92D6A0BB3976DB /* MomentumCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC8DBEDBF51129031234187 /* MomentumCore.framework */; };
+		613FE1C404F8AF0C1857ABDA /* MomentumCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC8DBEDBF51129031234187 /* MomentumCore.framework */; };
+		65B4A4A1D4FE4DE1DA8B679A /* MomentumBluetooth.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C14E7782BF5B0905D129D7D /* MomentumBluetooth.swift */; };
+		789DE1CD1FB2FA7368BD0FB2 /* MomentumBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72A8081C0BEA20B31923C364 /* MomentumBluetooth.framework */; };
+		7CF9F57F7559054B527DD1C2 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF75AA8616653B7C57392D8B /* WidgetKit.framework */; };
+		86449C90D10ABF1832EF9DD7 /* MomentumCore.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC8DBEDBF51129031234187 /* MomentumCore.framework */; };
+		90705FFB0BA4B3A32C7FAB6E /* MomentumCore.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9FC8DBEDBF51129031234187 /* MomentumCore.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A6C49ED58C1D3AF7C365B693 /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF0419855AA50F16676D74F /* AppIntents.framework */; };
+		BA044598509299EDA7B572EC /* MomentumSnapshotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7D954D41E0FFF691408E3BD /* MomentumSnapshotStore.swift */; };
+		BC8123967CA8298C4C590262 /* MomentumCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02A20379878DEBF24C8B93D2 /* MomentumCore.swift */; };
+		D6589A53EFF379AD2642B3D0 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E11FA2246D6DBF9B301D1290 /* AppKit.framework */; };
+		EE4B08DBEC22F511B60D8123 /* MomentumMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F1BBE03ED6F341D2AF21A6E /* MomentumMainView.swift */; };
+		F500F463BA8B9CCD02F904DF /* IOBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C08EF1597FF6C65700CE8B06 /* IOBluetooth.framework */; };
+		F6051A91513B079E803DDB63 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 333E2C8CAC7DEB2B0F0FF711 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		00C9D0C47830535E723680AC /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AF5B30897A728429E663BBC3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FB0F0364628727E4B3655521;
+			remoteInfo = MomentumDeviceWidget;
+		};
+		029C3F8A6763921F333C99EA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AF5B30897A728429E663BBC3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 25B9D47F92D9F8F08E68066C;
+			remoteInfo = MomentumCore;
+		};
+		191926704FD7FDA82CA00383 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AF5B30897A728429E663BBC3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 25B9D47F92D9F8F08E68066C;
+			remoteInfo = MomentumCore;
+		};
+		41543A0BAEA8931A0111BA20 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AF5B30897A728429E663BBC3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2BAD7E0E6AF0E3F48D0CF4F4;
+			remoteInfo = MomentumBluetooth;
+		};
+		6620FEC73BFBCE81E3DC631D /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AF5B30897A728429E663BBC3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 25B9D47F92D9F8F08E68066C;
+			remoteInfo = MomentumCore;
+		};
+		93EA20C2699C62F8622B9AD0 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = AF5B30897A728429E663BBC3 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 2BAD7E0E6AF0E3F48D0CF4F4;
+			remoteInfo = MomentumBluetooth;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		7032104CE8BD9AC266459D09 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				90705FFB0BA4B3A32C7FAB6E /* MomentumCore.framework in Embed Frameworks */,
+				1054EA4055102DE06CA23F88 /* MomentumBluetooth.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CB7B110C089FF4A2D27323A4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				14412D33AA1787D572473C14 /* MomentumDeviceWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		02A20379878DEBF24C8B93D2 /* MomentumCore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentumCore.swift; sourceTree = "<group>"; };
+		0F1BBE03ED6F341D2AF21A6E /* MomentumMainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentumMainView.swift; sourceTree = "<group>"; };
+		1232F83B3898484FB36670F4 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		16DFF51F5D85C080D8E8EFDB /* RFCOMMMomentumTransport.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RFCOMMMomentumTransport.swift; sourceTree = "<group>"; };
+		1A875F7901DFEE99D40DE868 /* MomentumDeviceWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MomentumDeviceWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		333E2C8CAC7DEB2B0F0FF711 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		5FF0419855AA50F16676D74F /* AppIntents.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppIntents.framework; path = System/Library/Frameworks/AppIntents.framework; sourceTree = SDKROOT; };
+		72A8081C0BEA20B31923C364 /* MomentumBluetooth.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MomentumBluetooth.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		76B9C792398729D8A37CFEB9 /* ServiceManagement.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ServiceManagement.framework; path = System/Library/Frameworks/ServiceManagement.framework; sourceTree = SDKROOT; };
+		7BA0C60943BF239492378968 /* MomentumDeviceSwitcher.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MomentumDeviceSwitcher.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7C14E7782BF5B0905D129D7D /* MomentumBluetooth.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentumBluetooth.swift; sourceTree = "<group>"; };
+		9C7D938530F4045B913BDCF9 /* MomentumSwitcherHost.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentumSwitcherHost.swift; sourceTree = "<group>"; };
+		9D1357040DE34BEF0C77C920 /* MomentumDeviceSwitcher.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = MomentumDeviceSwitcher.entitlements; sourceTree = "<group>"; };
+		9FC8DBEDBF51129031234187 /* MomentumCore.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = MomentumCore.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		BAADCF2E9711530B4DA5DB6E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BF75AA8616653B7C57392D8B /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		C08EF1597FF6C65700CE8B06 /* IOBluetooth.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOBluetooth.framework; path = System/Library/Frameworks/IOBluetooth.framework; sourceTree = SDKROOT; };
+		C33E20BC180C989D9AB695E9 /* MomentumControls.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentumControls.swift; sourceTree = "<group>"; };
+		C384B0FB24BAF81DD885BC9C /* MomentumWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentumWidget.swift; sourceTree = "<group>"; };
+		C7D954D41E0FFF691408E3BD /* MomentumSnapshotStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentumSnapshotStore.swift; sourceTree = "<group>"; };
+		CF1073BCA278996FCC55ED20 /* MomentumHeadsetClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MomentumHeadsetClient.swift; sourceTree = "<group>"; };
+		E11FA2246D6DBF9B301D1290 /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = System/Library/Frameworks/AppKit.framework; sourceTree = SDKROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		23D6A97C26FF3B6ADD01A160 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				4B7E2D50AC92D6A0BB3976DB /* MomentumCore.framework in Frameworks */,
+				789DE1CD1FB2FA7368BD0FB2 /* MomentumBluetooth.framework in Frameworks */,
+				44F1669F812E47ABFA3D9AE2 /* SwiftUI.framework in Frameworks */,
+				7CF9F57F7559054B527DD1C2 /* WidgetKit.framework in Frameworks */,
+				A6C49ED58C1D3AF7C365B693 /* AppIntents.framework in Frameworks */,
+				38DE5C5A973967B203950CA7 /* IOBluetooth.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A724A2073988FD610FF49B2D /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				86449C90D10ABF1832EF9DD7 /* MomentumCore.framework in Frameworks */,
+				F500F463BA8B9CCD02F904DF /* IOBluetooth.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F95EDF1CFB51BC66E301007F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				613FE1C404F8AF0C1857ABDA /* MomentumCore.framework in Frameworks */,
+				096454759E1CB55E48ED92C9 /* MomentumBluetooth.framework in Frameworks */,
+				D6589A53EFF379AD2642B3D0 /* AppKit.framework in Frameworks */,
+				2EF4F7D725AC618AEEC770DA /* SwiftUI.framework in Frameworks */,
+				25AA82DA8C60C33D98475D9A /* WidgetKit.framework in Frameworks */,
+				237CA457BD2A244AC4CA38A8 /* ServiceManagement.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		004D949FCC839FC35011EB15 /* MomentumBluetooth */ = {
+			isa = PBXGroup;
+			children = (
+				7C14E7782BF5B0905D129D7D /* MomentumBluetooth.swift */,
+				CF1073BCA278996FCC55ED20 /* MomentumHeadsetClient.swift */,
+				C7D954D41E0FFF691408E3BD /* MomentumSnapshotStore.swift */,
+				16DFF51F5D85C080D8E8EFDB /* RFCOMMMomentumTransport.swift */,
+			);
+			path = MomentumBluetooth;
+			sourceTree = "<group>";
+		};
+		1964B169CA8117D0E98A79E7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				5FF0419855AA50F16676D74F /* AppIntents.framework */,
+				E11FA2246D6DBF9B301D1290 /* AppKit.framework */,
+				C08EF1597FF6C65700CE8B06 /* IOBluetooth.framework */,
+				76B9C792398729D8A37CFEB9 /* ServiceManagement.framework */,
+				1232F83B3898484FB36670F4 /* SwiftUI.framework */,
+				BF75AA8616653B7C57392D8B /* WidgetKit.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		19F79BC99BFBBC4CAB644B10 = {
+			isa = PBXGroup;
+			children = (
+				9C34B53423C6C573DA6023C6 /* NativeApp */,
+				CADDAE11CE5E55722A59DF48 /* Sources */,
+				6BCC662CF1629417A7A7B3C9 /* WidgetExtension */,
+				1964B169CA8117D0E98A79E7 /* Frameworks */,
+				E681310983F1BCB2C6B59362 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		669FE61E26EB437D5A03D975 /* MomentumCore */ = {
+			isa = PBXGroup;
+			children = (
+				C33E20BC180C989D9AB695E9 /* MomentumControls.swift */,
+				02A20379878DEBF24C8B93D2 /* MomentumCore.swift */,
+			);
+			path = MomentumCore;
+			sourceTree = "<group>";
+		};
+		6BCC662CF1629417A7A7B3C9 /* WidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				C384B0FB24BAF81DD885BC9C /* MomentumWidget.swift */,
+			);
+			path = WidgetExtension;
+			sourceTree = "<group>";
+		};
+		9C34B53423C6C573DA6023C6 /* NativeApp */ = {
+			isa = PBXGroup;
+			children = (
+				333E2C8CAC7DEB2B0F0FF711 /* Assets.xcassets */,
+				BAADCF2E9711530B4DA5DB6E /* Info.plist */,
+				9D1357040DE34BEF0C77C920 /* MomentumDeviceSwitcher.entitlements */,
+				0F1BBE03ED6F341D2AF21A6E /* MomentumMainView.swift */,
+				9C7D938530F4045B913BDCF9 /* MomentumSwitcherHost.swift */,
+			);
+			path = NativeApp;
+			sourceTree = "<group>";
+		};
+		CADDAE11CE5E55722A59DF48 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				004D949FCC839FC35011EB15 /* MomentumBluetooth */,
+				669FE61E26EB437D5A03D975 /* MomentumCore */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		E681310983F1BCB2C6B59362 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				72A8081C0BEA20B31923C364 /* MomentumBluetooth.framework */,
+				9FC8DBEDBF51129031234187 /* MomentumCore.framework */,
+				7BA0C60943BF239492378968 /* MomentumDeviceSwitcher.app */,
+				1A875F7901DFEE99D40DE868 /* MomentumDeviceWidget.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		25B9D47F92D9F8F08E68066C /* MomentumCore */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 932C752D75FF099DC3CF6C65 /* Build configuration list for PBXNativeTarget "MomentumCore" */;
+			buildPhases = (
+				FE7E9A8709D326572D0F37A6 /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MomentumCore;
+			packageProductDependencies = (
+			);
+			productName = MomentumCore;
+			productReference = 9FC8DBEDBF51129031234187 /* MomentumCore.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		2BAD7E0E6AF0E3F48D0CF4F4 /* MomentumBluetooth */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7D60A3EC55F446A0E1E9262D /* Build configuration list for PBXNativeTarget "MomentumBluetooth" */;
+			buildPhases = (
+				C1893C0F2016D13A68C86C1F /* Sources */,
+				A724A2073988FD610FF49B2D /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A5FD1318361B2467059F3438 /* PBXTargetDependency */,
+			);
+			name = MomentumBluetooth;
+			packageProductDependencies = (
+			);
+			productName = MomentumBluetooth;
+			productReference = 72A8081C0BEA20B31923C364 /* MomentumBluetooth.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		2E764CCA8BCE5BDD88520698 /* MomentumDeviceSwitcher */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 1AEB4387570BFB8FF6CF178A /* Build configuration list for PBXNativeTarget "MomentumDeviceSwitcher" */;
+			buildPhases = (
+				CAC88A6147AE5FA207C0F2F8 /* Sources */,
+				5F45971361C10B518B9A6991 /* Resources */,
+				F95EDF1CFB51BC66E301007F /* Frameworks */,
+				CB7B110C089FF4A2D27323A4 /* Embed Foundation Extensions */,
+				7032104CE8BD9AC266459D09 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7637D0A498234E7730D604EB /* PBXTargetDependency */,
+				EE8A9D3B6634B8E3A7E93618 /* PBXTargetDependency */,
+				70D64D1F0138EBCC62BCC921 /* PBXTargetDependency */,
+			);
+			name = MomentumDeviceSwitcher;
+			packageProductDependencies = (
+			);
+			productName = MomentumDeviceSwitcher;
+			productReference = 7BA0C60943BF239492378968 /* MomentumDeviceSwitcher.app */;
+			productType = "com.apple.product-type.application";
+		};
+		FB0F0364628727E4B3655521 /* MomentumDeviceWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 832865624777DE57F2E8058B /* Build configuration list for PBXNativeTarget "MomentumDeviceWidget" */;
+			buildPhases = (
+				018B7FCFEB141A7194AEB494 /* Sources */,
+				23D6A97C26FF3B6ADD01A160 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8BBF422DFCB758BF862E9E73 /* PBXTargetDependency */,
+				CE566B7CAA0105FA888A414A /* PBXTargetDependency */,
+			);
+			name = MomentumDeviceWidget;
+			packageProductDependencies = (
+			);
+			productName = MomentumDeviceWidget;
+			productReference = 1A875F7901DFEE99D40DE868 /* MomentumDeviceWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		AF5B30897A728429E663BBC3 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				TargetAttributes = {
+					2E764CCA8BCE5BDD88520698 = {
+						ProvisioningStyle = Automatic;
+					};
+					FB0F0364628727E4B3655521 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = B9C2EA48C9607D3849285CBE /* Build configuration list for PBXProject "MomentumDeviceSwitcher" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 19F79BC99BFBBC4CAB644B10;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = E681310983F1BCB2C6B59362 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				25B9D47F92D9F8F08E68066C /* MomentumCore */,
+				2BAD7E0E6AF0E3F48D0CF4F4 /* MomentumBluetooth */,
+				2E764CCA8BCE5BDD88520698 /* MomentumDeviceSwitcher */,
+				FB0F0364628727E4B3655521 /* MomentumDeviceWidget */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		5F45971361C10B518B9A6991 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F6051A91513B079E803DDB63 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		018B7FCFEB141A7194AEB494 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				2800522F57DEEF2EE05B729E /* MomentumWidget.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		C1893C0F2016D13A68C86C1F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				65B4A4A1D4FE4DE1DA8B679A /* MomentumBluetooth.swift in Sources */,
+				274668C3D011A1775D5CC4B3 /* MomentumHeadsetClient.swift in Sources */,
+				BA044598509299EDA7B572EC /* MomentumSnapshotStore.swift in Sources */,
+				2765846CB96B1EB5A5AC36A8 /* RFCOMMMomentumTransport.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		CAC88A6147AE5FA207C0F2F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				EE4B08DBEC22F511B60D8123 /* MomentumMainView.swift in Sources */,
+				45D74E877058851393D211C6 /* MomentumSwitcherHost.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE7E9A8709D326572D0F37A6 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				137BC7565C43D812161BE0FB /* MomentumControls.swift in Sources */,
+				BC8123967CA8298C4C590262 /* MomentumCore.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		70D64D1F0138EBCC62BCC921 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FB0F0364628727E4B3655521 /* MomentumDeviceWidget */;
+			targetProxy = 00C9D0C47830535E723680AC /* PBXContainerItemProxy */;
+		};
+		7637D0A498234E7730D604EB /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 25B9D47F92D9F8F08E68066C /* MomentumCore */;
+			targetProxy = 6620FEC73BFBCE81E3DC631D /* PBXContainerItemProxy */;
+		};
+		8BBF422DFCB758BF862E9E73 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 25B9D47F92D9F8F08E68066C /* MomentumCore */;
+			targetProxy = 029C3F8A6763921F333C99EA /* PBXContainerItemProxy */;
+		};
+		A5FD1318361B2467059F3438 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 25B9D47F92D9F8F08E68066C /* MomentumCore */;
+			targetProxy = 191926704FD7FDA82CA00383 /* PBXContainerItemProxy */;
+		};
+		CE566B7CAA0105FA888A414A /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2BAD7E0E6AF0E3F48D0CF4F4 /* MomentumBluetooth */;
+			targetProxy = 93EA20C2699C62F8622B9AD0 /* PBXContainerItemProxy */;
+		};
+		EE8A9D3B6634B8E3A7E93618 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 2BAD7E0E6AF0E3F48D0CF4F4 /* MomentumBluetooth */;
+			targetProxy = 41543A0BAEA8931A0111BA20 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		077F361E2B41D39C36A2D133 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		083BD12041CD5327483F758B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhengyangliu.MomentumBluetooth;
+				PRODUCT_NAME = MomentumBluetooth;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		1B1C7C2E5066DC4A969E096C /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = NativeApp/MomentumDeviceSwitcher.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = NativeApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhengyangliu.MomentumDeviceSwitcher;
+				PRODUCT_NAME = "M4 Companion";
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+		5839AE444DC76B2755AF7E5E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhengyangliu.MomentumCore;
+				PRODUCT_NAME = MomentumCore;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		616B1761944E3D701A287104 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = WidgetExtension/MomentumDeviceWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = WidgetExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhengyangliu.MomentumDeviceSwitcher.Widget;
+				PRODUCT_NAME = MomentumDeviceWidget;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		837D9BFE069322B8B54CECB9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhengyangliu.MomentumBluetooth;
+				PRODUCT_NAME = MomentumBluetooth;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		8A48E371F61199AC11DC6E8B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = WidgetExtension/MomentumDeviceWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = WidgetExtension/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @executable_path/../../../../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhengyangliu.MomentumDeviceSwitcher.Widget;
+				PRODUCT_NAME = MomentumDeviceWidget;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
+		8EBA37E84BF1D8CF462A45BF /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = NativeApp/MomentumDeviceSwitcher.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = NativeApp/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhengyangliu.MomentumDeviceSwitcher;
+				PRODUCT_NAME = "M4 Companion";
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		C1064E63A3EDCC8F08946BD6 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				GENERATE_INFOPLIST_FILE = YES;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.zhengyangliu.MomentumCore;
+				PRODUCT_NAME = MomentumCore;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
+		E863297832A625B6B9929288 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_HARDENED_RUNTIME = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		1AEB4387570BFB8FF6CF178A /* Build configuration list for PBXNativeTarget "MomentumDeviceSwitcher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8EBA37E84BF1D8CF462A45BF /* Debug */,
+				1B1C7C2E5066DC4A969E096C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		7D60A3EC55F446A0E1E9262D /* Build configuration list for PBXNativeTarget "MomentumBluetooth" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				837D9BFE069322B8B54CECB9 /* Debug */,
+				083BD12041CD5327483F758B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		832865624777DE57F2E8058B /* Build configuration list for PBXNativeTarget "MomentumDeviceWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				616B1761944E3D701A287104 /* Debug */,
+				8A48E371F61199AC11DC6E8B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		932C752D75FF099DC3CF6C65 /* Build configuration list for PBXNativeTarget "MomentumCore" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				5839AE444DC76B2755AF7E5E /* Debug */,
+				C1064E63A3EDCC8F08946BD6 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B9C2EA48C9607D3849285CBE /* Build configuration list for PBXProject "MomentumDeviceSwitcher" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				077F361E2B41D39C36A2D133 /* Debug */,
+				E863297832A625B6B9929288 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = AF5B30897A728429E663BBC3 /* Project object */;
+}

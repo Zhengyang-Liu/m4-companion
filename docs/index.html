@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="M4 Companion is an unofficial, open-source macOS companion for Sennheiser MOMENTUM 4 headphones.">
+  <meta name="theme-color" content="#0a0a0b">
+  <title>M4 Companion — MOMENTUM 4 controls for macOS</title>
+  <link rel="icon" type="image/png" href="assets/favicon.png">
+  <link rel="stylesheet" href="assets/site.css">
+  <script src="assets/site.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+
+  <header class="site-header" data-header>
+    <a class="brand" href="#top" aria-label="M4 Companion home">
+      <img src="assets/favicon.png" width="32" height="32" alt="">
+      <span>M4 Companion</span>
+    </a>
+    <nav aria-label="Primary navigation">
+      <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="nav-links">
+        <span>Menu</span><i aria-hidden="true"></i>
+      </button>
+      <div class="nav-links" id="nav-links">
+        <a href="#controls">Controls</a>
+        <a href="#details">Details</a>
+        <a href="#install">Install</a>
+        <a class="nav-source" href="https://github.com/Zhengyang-Liu/m4-companion">View source <span aria-hidden="true">↗</span></a>
+      </div>
+    </nav>
+  </header>
+
+  <main id="main">
+    <section class="hero" id="top" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span></span> macOS companion · v0.1.0 Technical Preview</p>
+        <h1 id="hero-title">Your M4,<br><em>within reach.</em></h1>
+        <p class="hero-lede">Switch devices, tune noise control, and shape your sound without reaching for your phone.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Download for macOS <span aria-hidden="true">↓</span></a>
+          <a class="text-link" href="#controls">See what it controls <span aria-hidden="true">↘</span></a>
+        </div>
+        <p class="compatibility">Requires macOS 14 or later · Sennheiser MOMENTUM 4</p>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+        <div class="signal signal-a"></div>
+        <div class="signal signal-b"></div>
+        <div class="signal signal-c"></div>
+        <div class="icon-stage">
+          <img src="assets/app-icon.png" alt="" width="1024" height="1024">
+        </div>
+        <div class="status-chip"><i></i> M4 connected</div>
+      </div>
+    </section>
+
+    <section class="preview" id="controls" aria-labelledby="preview-title">
+      <div class="section-heading">
+        <p class="kicker">One native control surface</p>
+        <h2 id="preview-title">Less menu diving.<br>More listening.</h2>
+        <p>Fine-grained control in a focused macOS app, designed to feel at home on your desktop.</p>
+      </div>
+
+      <div class="preview-stage">
+        <div class="preview-label label-top"><span>01</span> Noise control</div>
+        <figure class="app-shot">
+          <img src="assets/app-main.png" width="840" height="1184" alt="M4 Companion showing adaptive, custom, and off noise-control modes, anti-wind options, five equalizer bands, presets, and Bass Boost.">
+          <figcaption>UI example from the Technical Preview. Appearance may change before release.</figcaption>
+        </figure>
+        <div class="preview-label label-bottom"><span>02</span> Five-band EQ</div>
+      </div>
+    </section>
+
+    <section class="control-story" aria-label="Product capabilities">
+      <article class="story-row devices">
+        <div class="story-number">01 / 03</div>
+        <div class="story-copy">
+          <p class="kicker">Device switching</p>
+          <h2>Move the connection,<br>not your attention.</h2>
+          <p>See remembered devices and hand an active connection from one to another. Phone-side changes are read back and reflected on your Mac, so both stay in step.</p>
+        </div>
+        <div class="device-demo" aria-label="Illustration of switching between a MacBook and an iPhone">
+          <div class="demo-device active"><span class="device-glyph laptop" aria-hidden="true"></span><div><b>MacBook Pro</b><small>Connected</small></div><i></i></div>
+          <div class="route"><span></span></div>
+          <div class="demo-device"><span class="device-glyph phone" aria-hidden="true"></span><div><b>iPhone</b><small>Available</small></div><i></i></div>
+        </div>
+      </article>
+
+      <article class="story-row sound">
+        <div class="story-number">02 / 03</div>
+        <div class="story-copy">
+          <p class="kicker">Noise control</p>
+          <h2>Quiet, precisely<br>where you want it.</h2>
+          <p>Choose Adaptive, Custom, or Off. Blend toward transparency with a direct slider, then set anti-wind to Off, Max, or Auto.</p>
+        </div>
+        <div class="control-demo" aria-hidden="true">
+          <div class="mode-tabs"><b>Adaptive</b><span>Custom</span><span>Off</span></div>
+          <div class="scale-labels"><span>ANC</span><span>Transparency</span></div>
+          <div class="scale"><i></i><b></b></div>
+          <div class="wind"><small>ANTI-WIND</small><div><span>Off</span><span>Max</span><b>Auto</b></div></div>
+        </div>
+      </article>
+
+      <article class="story-row eq">
+        <div class="story-number">03 / 03</div>
+        <div class="story-copy">
+          <p class="kicker">Sound shaping</p>
+          <h2>Five bands.<br>Your signature.</h2>
+          <p>Adjust the 5-band equalizer, jump to a preset, or add Bass Boost. Desktop widgets keep useful status and actions visible beyond the main window.</p>
+        </div>
+        <div class="eq-demo" aria-label="Illustration of a five-band equalizer">
+          <div class="eq-preset"><span>Flat</span><b>Bass Boost&nbsp; On</b></div>
+          <div class="bars" aria-hidden="true">
+            <i style="--level:66%"><b></b><small>63</small></i>
+            <i style="--level:48%"><b></b><small>250</small></i>
+            <i style="--level:57%"><b></b><small>1K</small></i>
+            <i style="--level:42%"><b></b><small>4K</small></i>
+            <i style="--level:61%"><b></b><small>8K</small></i>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <section class="details" id="details" aria-labelledby="details-title">
+      <div class="details-heading">
+        <p class="kicker">Built to be a companion</p>
+        <h2 id="details-title">Small footprint.<br>Clear boundaries.</h2>
+      </div>
+      <dl class="details-list">
+        <div><dt>Works with</dt><dd>Sennheiser MOMENTUM 4</dd></div>
+        <div><dt>Requires</dt><dd>macOS 14 Sonoma or later</dd></div>
+        <div><dt>Privacy</dt><dd>Local-only. No account, cloud service, or analytics.</dd></div>
+        <div><dt>Source</dt><dd>Open source on <a href="https://github.com/Zhengyang-Liu/m4-companion">GitHub <span aria-hidden="true">↗</span></a></dd></div>
+      </dl>
+    </section>
+
+    <section class="install" id="install" aria-labelledby="install-title">
+      <div class="install-intro">
+        <p class="kicker">Technical Preview</p>
+        <h2 id="install-title">Install with<br>your eyes open.</h2>
+        <p>This preview is ad-hoc signed and not notarized by Apple. macOS may block the first launch. Review the source and proceed only if you are comfortable testing pre-release software.</p>
+        <a class="button button-primary" href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Get v0.1.0 <span aria-hidden="true">↓</span></a>
+      </div>
+
+      <div class="install-steps">
+        <ol>
+          <li><span>01</span><div><h3>Download and mount</h3><p>Download the DMG from GitHub Releases, open it, and drag M4 Companion to Applications.</p></div></li>
+          <li><span>02</span><div><h3>Open explicitly</h3><p>In Applications, Control-click or right-click M4 Companion, choose <strong>Open</strong>, then confirm <strong>Open</strong>.</p></div></li>
+          <li><span>03</span><div><h3>If macOS still blocks it</h3><p>Open <strong>System Settings → Privacy &amp; Security</strong>, find the blocked-app notice, and choose <strong>Open Anyway</strong>.</p></div></li>
+        </ol>
+
+        <details>
+          <summary>Optional Terminal method <span aria-hidden="true">+</span></summary>
+          <div class="terminal-block">
+            <div class="terminal-bar"><i></i><i></i><i></i><span>Terminal</span></div>
+            <code>xattr -dr com.apple.quarantine "/Applications/M4 Companion.app"</code>
+            <button class="copy-button" type="button" data-copy='xattr -dr com.apple.quarantine "/Applications/M4 Companion.app"'>Copy</button>
+          </div>
+          <p>Only remove quarantine after you have verified the download and trust its source.</p>
+        </details>
+      </div>
+    </section>
+
+    <section class="closing" aria-labelledby="closing-title">
+      <p class="kicker">Open source · local-first</p>
+      <h2 id="closing-title">Keep the phone<br>in your pocket.</h2>
+      <div class="closing-actions">
+        <a class="button button-primary" href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Download Technical Preview <span aria-hidden="true">↓</span></a>
+        <a class="button button-secondary" href="https://github.com/Zhengyang-Liu/m4-companion">Explore the source <span aria-hidden="true">↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <a class="brand" href="#top" aria-label="Back to top">
+      <img src="assets/favicon.png" width="28" height="28" alt="">
+      <span>M4 Companion</span>
+    </a>
+    <p>M4 Companion is an independent, unofficial open-source project. It is not affiliated with, endorsed by, or supported by Sennheiser. Sennheiser and MOMENTUM are trademarks of their respective owner.</p>
+    <div><a href="https://github.com/Zhengyang-Liu/m4-companion">GitHub</a><a href="https://github.com/Zhengyang-Liu/m4-companion/releases/latest">Download</a></div>
+  </footer>
+</body>
+</html>
