@@ -74,6 +74,7 @@ h3 { margin-bottom: 9px; font-size: 19px; line-height: 1.25; letter-spacing: -.0
 .widget-inner { min-height: 430px; display: grid; grid-template-columns: .8fr 1.2fr; align-items: center; gap: clamp(50px, 8vw, 100px); padding-top: 72px; padding-bottom: 72px; }
 .widget-inner img { width: 100%; border-radius: 22px; box-shadow: 0 18px 45px rgba(0, 0, 0, .16); }
 .widget-inner .muted { margin-top: 20px; font-size: 14px; }
+.widget-inner .muted + .muted { margin-top: 10px; }
 
 .install { display: grid; grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr); column-gap: clamp(60px, 9vw, 120px); }
 .install > *, .widget-inner > *, .steps, .install-note { min-width: 0; }
