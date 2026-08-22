@@ -11,7 +11,7 @@ Thanks for helping improve M4 Companion. Contributions can include bug fixes, te
 
 ## Development setup
 
-You need macOS 14 or later, Xcode 16 or later, and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+You need macOS 14 or later, Xcode 16.3 or later (Swift 6.1 toolchain), and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```bash
 git clone https://github.com/Zhengyang-Liu/m4-companion

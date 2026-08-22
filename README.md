@@ -82,7 +82,7 @@ Clicking a non-Mac device tile connects or disconnects that peer. Clicking elsew
 
 ### Prerequisites
 
-- Xcode 16 or later, with its command-line tools selected.
+- Xcode 16.3 or later, with its command-line tools selected (Swift 6.1 toolchain).
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen).
 
 ```bash

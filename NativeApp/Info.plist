@@ -2,7 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "https://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
-  <key>CFBundleDevelopmentRegion</key><string>zh_CN</string>
+  <key>CFBundleDevelopmentRegion</key><string>en</string>
   <key>CFBundleDisplayName</key><string>M4 Companion</string>
   <key>CFBundleExecutable</key><string>$(EXECUTABLE_NAME)</string>
   <key>CFBundleIdentifier</key><string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
@@ -17,7 +17,7 @@
     <key>CFBundleURLName</key><string>M4 Companion</string>
     <key>CFBundleURLSchemes</key><array><string>momentum-switcher</string></array>
   </dict></array>
-  <key>NSBluetoothAlwaysUsageDescription</key><string>用于读取 MOMENTUM 4 的设备、电量并控制双设备连接、降噪、通透模式和均衡器。</string>
+  <key>NSBluetoothAlwaysUsageDescription</key><string>M4 Companion uses Bluetooth to read MOMENTUM 4 device and battery status and to control multipoint connections, noise control, transparency, and equalizer settings.</string>
   <key>NSHighResolutionCapable</key><true/>
 </dict>
 </plist>
