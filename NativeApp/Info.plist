@@ -18,6 +18,12 @@
     <key>CFBundleURLSchemes</key><array><string>momentum-switcher</string></array>
   </dict></array>
   <key>NSBluetoothAlwaysUsageDescription</key><string>M4 Companion uses Bluetooth to read MOMENTUM 4 device and battery status and to control multipoint connections, noise control, transparency, and equalizer settings.</string>
+  <key>SUFeedURL</key><string>https://zhengyang-liu.github.io/m4-companion/appcast.xml</string>
+  <key>SUPublicEDKey</key><string>Q7SjjUt/Q0tLqzNUN5DRr7EufyCLP/GcC6ob5+etJ+8=</string>
+  <key>SUEnableAutomaticChecks</key><true/>
+  <key>SUScheduledCheckInterval</key><integer>86400</integer>
+  <key>SUAutomaticallyUpdate</key><false/>
+  <key>SUEnableInstallerLauncherService</key><true/>
   <key>NSHighResolutionCapable</key><true/>
 </dict>
 </plist>

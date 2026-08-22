@@ -3,6 +3,12 @@
 <plist version="1.0"><dict>
   <key>com.apple.security.app-sandbox</key><true/>
   <key>com.apple.security.device.bluetooth</key><true/>
+  <key>com.apple.security.network.client</key><true/>
+  <key>com.apple.security.temporary-exception.mach-lookup.global-name</key>
+  <array>
+    <string>com.zhengyangliu.MomentumDeviceSwitcher-spks</string>
+    <string>com.zhengyangliu.MomentumDeviceSwitcher-spki</string>
+  </array>
   <key>com.apple.security.temporary-exception.files.home-relative-path.read-write</key>
   <array><string>/Library/Application Support/MomentumDeviceSwitcher/</string></array>
 </dict></plist>

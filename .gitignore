@@ -21,3 +21,6 @@ xcuserdata/
 *.log
 *.dmg
 *.zip
+
+# Sparkle's EdDSA private key must never enter source control.
+.sparkle-private-key*

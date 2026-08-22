@@ -30,6 +30,7 @@
 		A6C49ED58C1D3AF7C365B693 /* AppIntents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5FF0419855AA50F16676D74F /* AppIntents.framework */; };
 		BA044598509299EDA7B572EC /* MomentumSnapshotStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7D954D41E0FFF691408E3BD /* MomentumSnapshotStore.swift */; };
 		BC8123967CA8298C4C590262 /* MomentumCore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 02A20379878DEBF24C8B93D2 /* MomentumCore.swift */; };
+		C7B05F948FE2EE3DFD51D211 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 2EFB69CCFDB96D5610798406 /* Sparkle */; };
 		D6589A53EFF379AD2642B3D0 /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E11FA2246D6DBF9B301D1290 /* AppKit.framework */; };
 		EE4B08DBEC22F511B60D8123 /* MomentumMainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F1BBE03ED6F341D2AF21A6E /* MomentumMainView.swift */; };
 		F500F463BA8B9CCD02F904DF /* IOBluetooth.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C08EF1597FF6C65700CE8B06 /* IOBluetooth.framework */; };
@@ -161,6 +162,7 @@
 			files = (
 				613FE1C404F8AF0C1857ABDA /* MomentumCore.framework in Frameworks */,
 				096454759E1CB55E48ED92C9 /* MomentumBluetooth.framework in Frameworks */,
+				C7B05F948FE2EE3DFD51D211 /* Sparkle in Frameworks */,
 				D6589A53EFF379AD2642B3D0 /* AppKit.framework in Frameworks */,
 				2EF4F7D725AC618AEEC770DA /* SwiftUI.framework in Frameworks */,
 				25AA82DA8C60C33D98475D9A /* WidgetKit.framework in Frameworks */,
@@ -313,6 +315,7 @@
 			);
 			name = MomentumDeviceSwitcher;
 			packageProductDependencies = (
+				2EFB69CCFDB96D5610798406 /* Sparkle */,
 			);
 			productName = MomentumDeviceSwitcher;
 			productReference = 7BA0C60943BF239492378968 /* MomentumDeviceSwitcher.app */;
@@ -364,6 +367,9 @@
 			);
 			mainGroup = 19F79BC99BFBBC4CAB644B10;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				1EB2B5821BAA3034DB4A6773 /* XCRemoteSwiftPackageReference "Sparkle" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = E681310983F1BCB2C6B59362 /* Products */;
 			projectDirPath = "";
@@ -794,6 +800,25 @@
 			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		1EB2B5821BAA3034DB4A6773 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = exactVersion;
+				version = 2.9.6;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		2EFB69CCFDB96D5610798406 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1EB2B5821BAA3034DB4A6773 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = AF5B30897A728429E663BBC3 /* Project object */;
 }

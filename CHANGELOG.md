@@ -2,6 +2,13 @@
 
 All notable changes to M4 Companion are documented here.
 
+## Unreleased
+
+### Added
+
+- Sparkle 2 integration with daily signed-update checks and a manual **Check for Updates…** command.
+- Reproducible EdDSA-signed appcast generation for GitHub Releases and GitHub Pages.
+
 ## [0.1.0] - 2026-08-21
 
 ### Added

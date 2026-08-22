@@ -3,6 +3,7 @@ import MomentumBluetooth
 import MomentumCore
 import OSLog
 import ServiceManagement
+import Sparkle
 import SwiftUI
 import WidgetKit
 
@@ -12,11 +13,23 @@ struct MomentumSwitcherHostApp: App {
 
     var body: some Scene {
         Settings { EmptyView() }
+            .commands {
+                CommandGroup(after: .appInfo) {
+                    Button("Check for Updates…") {
+                        delegate.checkForUpdates()
+                    }
+                }
+            }
     }
 }
 
 @MainActor
 final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+    private let updaterController = SPUStandardUpdaterController(
+        startingUpdater: true,
+        updaterDelegate: nil,
+        userDriverDelegate: nil
+    )
     private let logger = Logger(
         subsystem: "com.zhengyangliu.MomentumDeviceSwitcher",
         category: "WidgetAction"
@@ -34,6 +47,10 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private var mainWindow: NSWindow?
     private var mainViewModel: MomentumMainViewModel?
     private var widgetActionQueueWatcher: MomentumWidgetActionQueueWatcher?
+
+    func checkForUpdates() {
+        updaterController.checkForUpdates(nil)
+    }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         installWidgetActionWatcher()

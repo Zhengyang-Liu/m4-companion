@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
+  <channel>
+    <title>M4 Companion Updates</title>
+    <link>https://zhengyang-liu.github.io/m4-companion/</link>
+    <description>M4 Companion release updates</description>
+    <language>en</language>
+  </channel>
+</rss>

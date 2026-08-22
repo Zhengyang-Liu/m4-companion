@@ -3,6 +3,7 @@ set -euo pipefail
 
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 VERSION="${VERSION:-0.1.0}"
+BUILD_NUMBER="${BUILD_NUMBER:-1}"
 DERIVED="$ROOT/.release-build"
 DIST="$ROOT/dist"
 STAGE="$DIST/dmg-root"
@@ -14,6 +15,11 @@ command -v xcodegen >/dev/null || {
   exit 1
 }
 
+[[ "$BUILD_NUMBER" =~ ^[0-9]+$ ]] || {
+  echo "BUILD_NUMBER must be a non-negative integer." >&2
+  exit 1
+}
+
 cd "$ROOT"
 xcodegen generate
 xcodebuild \
@@ -21,6 +27,8 @@ xcodebuild \
   -scheme MomentumDeviceSwitcher \
   -configuration Release \
   -derivedDataPath "$DERIVED" \
+  MARKETING_VERSION="$VERSION" \
+  CURRENT_PROJECT_VERSION="$BUILD_NUMBER" \
   CODE_SIGNING_ALLOWED=NO \
   clean build
 

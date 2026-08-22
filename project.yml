@@ -12,6 +12,10 @@ settings:
     MARKETING_VERSION: "0.1.0"
     ENABLE_HARDENED_RUNTIME: YES
     CLANG_ENABLE_MODULES: YES
+packages:
+  Sparkle:
+    url: https://github.com/sparkle-project/Sparkle
+    exactVersion: 2.9.6
 targets:
   MomentumCore:
     type: framework
@@ -52,6 +56,8 @@ targets:
         embed: true
       - target: MomentumDeviceWidget
         embed: true
+      - package: Sparkle
+        product: Sparkle
       - sdk: AppKit.framework
       - sdk: SwiftUI.framework
       - sdk: WidgetKit.framework

@@ -31,7 +31,8 @@ A native macOS companion for managing a Sennheiser MOMENTUM 4 from the desktop: 
 - Includes interactive **medium** and **large** WidgetKit widgets for connection status, battery, and peer switching.
 - Refreshes state after actions, periodically in the background, and while the main controls are open.
 - Starts as a macOS login item after first launch so widget actions can reach the headset.
-- Uses only macOS system frameworks at runtime; no cloud service or account is required.
+- Checks for signed updates with Sparkle 2; manual checks are available from **M4 Companion → Check for Updates…**.
+- Requires no cloud account; Sparkle contacts only the project's public GitHub Pages feed and GitHub Release download URLs.
 
 ## Requirements
 
@@ -84,6 +85,7 @@ Clicking a non-Mac device tile connects or disconnects that peer. Clicking elsew
 
 - Xcode 16.3 or later, with its command-line tools selected (Swift 6.1 toolchain).
 - [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+- Sparkle 2 is resolved automatically through Swift Package Manager.
 
 ```bash
 git clone https://github.com/Zhengyang-Liu/m4-companion
@@ -110,10 +112,11 @@ xcodebuild \
   build
 ```
 
-Run the local codec/planning checks with:
+Run the local codec/planning and Sparkle configuration checks with:
 
 ```bash
 swift run CoreTests
+python3 scripts/test-sparkle-config.py
 ```
 
 `MomentumProbe` talks to real paired hardware. Do not run it unless you intend to probe a connected headset.
@@ -205,7 +208,7 @@ Contributions are welcome; see [CONTRIBUTING.md](CONTRIBUTING.md). Please report
 
 This project was made possible by careful observation, testing, and independent reverse engineering of the headset's Bluetooth control behavior, together with protocol knowledge shared by the wider audio and Bluetooth communities. Thanks also to the maintainers of XcodeGen and to contributors who test cautiously across macOS and firmware versions.
 
-No third-party runtime dependency is required by the app; it is built on Apple system frameworks.
+The app embeds [Sparkle 2](https://sparkle-project.org/) for signed software updates. Headset control and local caching use Apple system frameworks and do not require an account or cloud backend.
 
 ## Trademark disclaimer
 
