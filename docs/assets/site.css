@@ -54,7 +54,7 @@ h1 { max-width: 620px; margin-bottom: 22px; font-size: clamp(42px, 4.5vw, 58px);
 .app-window { width: min(390px, 80%); max-height: 530px; overflow: hidden; border: 1px solid #3d3d41; border-radius: 18px; background: #111; box-shadow: 0 22px 60px rgba(0, 0, 0, .17); }
 .app-window img { width: 100%; height: auto; }
 .widget-window { position: absolute; right: 18px; bottom: 22px; width: min(430px, 72%); border-radius: 18px; box-shadow: 0 16px 35px rgba(0, 0, 0, .26); }
-.widget-window img { width: 100%; border-radius: 18px; }
+.widget-window img { width: 100%; height: auto; border-radius: 18px; }
 
 .facts { display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .facts span { padding: 20px 16px; text-align: center; color: var(--muted); font-size: 13px; }
