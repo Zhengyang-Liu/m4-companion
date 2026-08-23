@@ -20,6 +20,9 @@ checks = {
     "host no longer creates a Dock window": "NSWindow(" not in host,
     "panel closes when it loses key status":
         "windowDidResignKey" in host and "orderOut(nil)" in host,
+    "panel stays visible while its save-profile modal is presented":
+        "panel.attachedSheet != nil" in host
+        and "NSApp.modalWindow != nil" in host,
     "desktop clicks explicitly dismiss the panel":
         "addGlobalMonitorForEvents" in host and "closeControlPanel()" in host,
     "cached panel state refreshes connections without blocking presentation":

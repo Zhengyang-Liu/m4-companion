@@ -123,9 +123,18 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         guard let panel = notification.object as? MenuPanel,
               panel === controlPanel else { return }
         DispatchQueue.main.async { [weak self, weak panel] in
-            guard let self, let panel, panel.isVisible, !panel.isKeyWindow else { return }
+            guard let self, let panel,
+                  self.shouldCloseControlPanel(afterResigningKey: panel) else { return }
             self.closeControlPanel()
         }
+    }
+
+    private func shouldCloseControlPanel(afterResigningKey panel: MenuPanel) -> Bool {
+        guard panel.isVisible, !panel.isKeyWindow else { return false }
+        if panel.attachedSheet != nil { return false }
+        if NSApp.keyWindow?.sheetParent === panel { return false }
+        if NSApp.modalWindow != nil { return false }
+        return true
     }
 
     private func installMenuBarItem() {
