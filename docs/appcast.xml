@@ -1,9 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
-<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
-  <channel>
-    <title>M4 Companion Updates</title>
-    <link>https://zhengyang-liu.github.io/m4-companion/</link>
-    <description>M4 Companion release updates</description>
-    <language>en</language>
-  </channel>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle" version="2.0">
+    <channel>
+        <title>M4 Companion Updates</title>
+        <link>https://zhengyang-liu.github.io/m4-companion/</link>
+        <description>M4 Companion release updates</description>
+        <language>en</language>
+        <item>
+            <title>0.2.0</title>
+            <pubDate>Sat, 22 Aug 2026 20:40:50 -0700</pubDate>
+            <link>https://zhengyang-liu.github.io/m4-companion/</link>
+            <sparkle:version>14</sparkle:version>
+            <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/Zhengyang-Liu/m4-companion/releases/download/v0.2.0/M4-Companion-0.2.0-Technical-Preview.dmg" length="2611632" type="application/octet-stream" sparkle:edSignature="081D39Iy/Sy0HKmSMVCaky9B+yPilcqTn3kGBfnxPBpJw8xN97CjTftQk5ljvsr7iwgCqEYnI9L/W89GZB9lDA=="/>
+        </item>
+    </channel>
 </rss>
