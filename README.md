@@ -6,9 +6,9 @@
 
 A native macOS menu bar companion for managing a Sennheiser MOMENTUM 4: switch multipoint peers, see battery and connection state, adjust noise control and EQ, and use an interactive WidgetKit widget.
 
-> **v0.2.0 Technical Preview** — currently supports **MOMENTUM 4 only**. The downloadable build is ad-hoc signed and not notarized; review the [installation note](#install-from-a-github-release) before running it.
+> **v0.2.1 Technical Preview** — currently supports **MOMENTUM 4 only**. The downloadable build is ad-hoc signed and not notarized; review the [installation note](#install-from-a-github-release) before running it.
 
-[Download Technical Preview](https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.0) · [Report a bug](https://github.com/Zhengyang-Liu/m4-companion/issues) · [中文速览](#中文速览)
+[Download Technical Preview](https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.1) · [Report a bug](https://github.com/Zhengyang-Liu/m4-companion/issues) · [中文速览](#中文速览)
 
 ## Screenshots
 
@@ -46,7 +46,7 @@ Only one matching MOMENTUM 4 should be paired/available to the app at a time. Mu
 
 ## Install from a GitHub Release
 
-1. Download the v0.2.0 Technical Preview disk image from [GitHub Releases](https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.0).
+1. Download the v0.2.1 Technical Preview disk image from [GitHub Releases](https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.1).
 2. Open the disk image and drag **M4 Companion.app** to **Applications**.
 3. Launch M4 Companion and allow Bluetooth access when macOS asks.
 4. Keep the headphones powered on and connected to this Mac for initial discovery.
@@ -147,7 +147,7 @@ Device names may be sensitive. Remove them from screenshots and logs before post
 
 ## Limitations
 
-- **v0.2.0 supports MOMENTUM 4 only.** Other Sennheiser models are not tested or supported.
+- **v0.2.1 supports MOMENTUM 4 only.** Other Sennheiser models are not tested or supported.
 - This is an early Technical Preview and is neither Developer ID signed nor notarized.
 - It relies on a private, undocumented headset protocol that may change with firmware updates.
 - The headset must already be paired, powered on, and reachable from the Mac.
@@ -199,7 +199,7 @@ Roadmap items are intentions, not commitments.
 
 ## 中文速览
 
-M4 Companion 是一个面向 macOS 14+ 的 MOMENTUM 4 非官方菜单栏工具，可切换双设备连接、查看电量、调节降噪/通透/EQ，并提供中号与大号桌面小组件。v0.2.0 是未公证的技术预览版；安装前请阅读[安装与 Gatekeeper 说明](#install-from-a-github-release)。目前仅支持 MOMENTUM 4，所有通信和缓存均在本机完成，不需要账号或云服务。
+M4 Companion 是一个面向 macOS 14+ 的 MOMENTUM 4 非官方菜单栏工具，可切换双设备连接、查看电量、调节降噪/通透/EQ，并提供中号与大号桌面小组件。v0.2.1 是未公证的技术预览版；安装前请阅读[安装与 Gatekeeper 说明](#install-from-a-github-release)。目前仅支持 MOMENTUM 4，所有通信和缓存均在本机完成，不需要账号或云服务。
 
 ## Contributing and security
 

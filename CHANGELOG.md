@@ -4,6 +4,13 @@ All notable changes to M4 Companion are documented here.
 
 ## Unreleased
 
+## [0.2.1] - 2026-08-23
+
+### Fixed
+
+- Kept the menu bar panel visible while the **Save EQ Profile** naming alert is open and after it is cancelled.
+- Preserved normal outside-click dismissal and first-click reopening after the alert-handling fix.
+
 ## [0.2.0] - 2026-08-22
 
 ### Added
@@ -39,5 +46,6 @@ All notable changes to M4 Companion are documented here.
 
 The v0.1.0 binary is ad-hoc signed and not notarized. Follow the app-scoped Gatekeeper instructions in the README. A clean local reinstall from the release-style DMG was tested with the host app and WidgetKit widget both functioning after quarantine removal.
 
+[0.2.1]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.1
 [0.2.0]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.1.0

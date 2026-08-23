@@ -36,4 +36,4 @@ General bugs and compatibility problems that do not expose sensitive information
 
 ## Technical Preview notice
 
-Published v0.2.0 binaries are ad-hoc signed and unnotarized. This is a distribution limitation, not a request to disable system-wide protections. Follow only the app-scoped Gatekeeper instructions in the README and obtain releases from this repository's official release page.
+Published v0.2.1 binaries are ad-hoc signed and unnotarized. This is a distribution limitation, not a request to disable system-wide protections. Follow only the app-scoped Gatekeeper instructions in the README and obtain releases from this repository's official release page.
