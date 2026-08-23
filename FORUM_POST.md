@@ -18,7 +18,7 @@ Everything runs locally over Bluetooth. There is no account, cloud backend, tele
 
 **Current status:** v0.2.0 Technical Preview for macOS 14+. The DMG is ad-hoc signed and not notarized, so macOS may require **Open Anyway** or the scoped quarantine command documented in the README. I clean-tested the release-style DMG locally; the menu bar app and WidgetKit widget both loaded and worked after the bypass.
 
-Download: https://github.com/Zhengyang-Liu/m4-companion/releases/latest
+Download: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.0
 
 Source: https://github.com/Zhengyang-Liu/m4-companion
 
@@ -46,7 +46,7 @@ This is an independent, unofficial project and is not affiliated with or endorse
 
 当前是 **v0.2.0 Technical Preview**，要求 macOS 14+。安装包采用 Ad-hoc 签名，尚未经过 Apple 公证，所以首次启动可能需要在“隐私与安全性”中选择“仍要打开”，或按 README 执行仅针对本 App 的 quarantine 移除命令。我已经从发布版 DMG 安装并验证过菜单栏程序和 Widget。
 
-下载：https://github.com/Zhengyang-Liu/m4-companion/releases/latest
+下载：https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.0
 
 源码：https://github.com/Zhengyang-Liu/m4-companion
 

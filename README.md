@@ -8,7 +8,7 @@ A native macOS menu bar companion for managing a Sennheiser MOMENTUM 4: switch m
 
 > **v0.2.0 Technical Preview** — currently supports **MOMENTUM 4 only**. The downloadable build is ad-hoc signed and not notarized; review the [installation note](#install-from-a-github-release) before running it.
 
-[Download Technical Preview](https://github.com/Zhengyang-Liu/m4-companion/releases/latest) · [Report a bug](https://github.com/Zhengyang-Liu/m4-companion/issues) · [中文速览](#中文速览)
+[Download Technical Preview](https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.0) · [Report a bug](https://github.com/Zhengyang-Liu/m4-companion/issues) · [中文速览](#中文速览)
 
 ## Screenshots
 
@@ -46,7 +46,7 @@ Only one matching MOMENTUM 4 should be paired/available to the app at a time. Mu
 
 ## Install from a GitHub Release
 
-1. Download the v0.2.0 Technical Preview disk image from [GitHub Releases](https://github.com/Zhengyang-Liu/m4-companion/releases/latest).
+1. Download the v0.2.0 Technical Preview disk image from [GitHub Releases](https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.0).
 2. Open the disk image and drag **M4 Companion.app** to **Applications**.
 3. Launch M4 Companion and allow Bluetooth access when macOS asks.
 4. Keep the headphones powered on and connected to this Mac for initial discovery.
