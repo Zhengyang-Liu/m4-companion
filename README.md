@@ -14,7 +14,7 @@ A native macOS menu bar companion for managing a Sennheiser MOMENTUM 4: switch m
 
 <table>
   <tr>
-    <td align="center"><img src="docs/assets/app-main.png" alt="M4 Companion main window showing connections, noise control, and equalizer" width="420"><br><strong>Main app</strong></td>
+    <td align="center"><img src="docs/assets/app-main.png" alt="M4 Companion menu bar panel showing connections, noise control, and sound modes" width="420"><br><strong>Menu bar panel</strong></td>
     <td align="center"><img src="docs/assets/widget.png" alt="M4 Companion medium desktop widget" width="430"><br><strong>Desktop widget</strong></td>
   </tr>
 </table>
