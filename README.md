@@ -4,9 +4,9 @@
 
 # M4 Companion
 
-A native macOS companion for managing a Sennheiser MOMENTUM 4 from the desktop: switch multipoint peers, see battery and connection state, adjust noise control and EQ, and use an interactive WidgetKit widget.
+A native macOS menu bar companion for managing a Sennheiser MOMENTUM 4: switch multipoint peers, see battery and connection state, adjust noise control and EQ, and use an interactive WidgetKit widget.
 
-> **v0.1.0 Technical Preview** — currently supports **MOMENTUM 4 only**. The downloadable build is ad-hoc signed and not notarized; review the [installation note](#install-from-a-github-release) before running it.
+> **v0.2.0 Technical Preview** — currently supports **MOMENTUM 4 only**. The downloadable build is ad-hoc signed and not notarized; review the [installation note](#install-from-a-github-release) before running it.
 
 [Download Technical Preview](https://github.com/Zhengyang-Liu/m4-companion/releases/latest) · [Report a bug](https://github.com/Zhengyang-Liu/m4-companion/issues) · [中文速览](#中文速览)
 
@@ -31,7 +31,8 @@ A native macOS companion for managing a Sennheiser MOMENTUM 4 from the desktop: 
 - Includes interactive **medium** and **large** WidgetKit widgets for connection status, battery, and peer switching.
 - Refreshes state after actions, periodically in the background, and while the main controls are open.
 - Starts as a macOS login item after first launch so widget actions can reach the headset.
-- Checks for signed updates with Sparkle 2; manual checks are available from **M4 Companion → Check for Updates…**.
+- Lives in the menu bar without a Dock icon; click the headphones icon to open the complete control panel.
+- Checks for signed updates with Sparkle 2; manual checks are available from **Check for Updates…** at the bottom of the control panel.
 - Requires no cloud account; Sparkle contacts only the project's public GitHub Pages feed and GitHub Release download URLs.
 
 ## Requirements
@@ -45,7 +46,7 @@ Only one matching MOMENTUM 4 should be paired/available to the app at a time. Mu
 
 ## Install from a GitHub Release
 
-1. Download the v0.1.0 Technical Preview disk image from [GitHub Releases](https://github.com/Zhengyang-Liu/m4-companion/releases/latest).
+1. Download the v0.2.0 Technical Preview disk image from [GitHub Releases](https://github.com/Zhengyang-Liu/m4-companion/releases/latest).
 2. Open the disk image and drag **M4 Companion.app** to **Applications**.
 3. Launch M4 Companion and allow Bluetooth access when macOS asks.
 4. Keep the headphones powered on and connected to this Mac for initial discovery.
@@ -126,7 +127,7 @@ python3 scripts/test-sparkle-config.py
 ## Architecture
 
 ```text
-NativeApp (SwiftUI/AppKit host)
+NativeApp (AppKit menu bar host + SwiftUI popup panel)
   ├── MomentumCore       models, GAIA codecs, switch/control policies
   ├── MomentumBluetooth  IOBluetooth RFCOMM transport and headset client
   └── WidgetExtension    WidgetKit medium/large UI and actions
@@ -134,7 +135,7 @@ NativeApp (SwiftUI/AppKit host)
 
 - **MomentumCore** contains protocol framing, validation, connection planning, control models, and recovery policies.
 - **MomentumBluetooth** discovers the paired headset and exchanges private GAIA messages over Bluetooth Classic RFCOMM.
-- **NativeApp** owns live headset operations, the main SwiftUI controls, login-item behavior, and widget refreshes.
+- **NativeApp** owns the menu bar status item, full SwiftUI popup panel, live headset operations, login-item behavior, and widget refreshes.
 - **WidgetExtension** reads a restricted local snapshot and sends capability-token-protected actions back to the host app through a custom URL scheme.
 - The host and widget share only a local JSON snapshot under the current user's Application Support directory.
 
@@ -146,7 +147,7 @@ Device names may be sensitive. Remove them from screenshots and logs before post
 
 ## Limitations
 
-- **v0.1.0 supports MOMENTUM 4 only.** Other Sennheiser models are not tested or supported.
+- **v0.2.0 supports MOMENTUM 4 only.** Other Sennheiser models are not tested or supported.
 - This is an early Technical Preview and is neither Developer ID signed nor notarized.
 - It relies on a private, undocumented headset protocol that may change with firmware updates.
 - The headset must already be paired, powered on, and reachable from the Mac.
@@ -198,7 +199,7 @@ Roadmap items are intentions, not commitments.
 
 ## 中文速览
 
-M4 Companion 是一个面向 macOS 14+ 的 MOMENTUM 4 非官方桌面工具，可切换双设备连接、查看电量、调节降噪/通透/EQ，并提供中号与大号桌面小组件。v0.1.0 是未公证的技术预览版；安装前请阅读[安装与 Gatekeeper 说明](#install-from-a-github-release)。目前仅支持 MOMENTUM 4，所有通信和缓存均在本机完成，不需要账号或云服务。
+M4 Companion 是一个面向 macOS 14+ 的 MOMENTUM 4 非官方菜单栏工具，可切换双设备连接、查看电量、调节降噪/通透/EQ，并提供中号与大号桌面小组件。v0.2.0 是未公证的技术预览版；安装前请阅读[安装与 Gatekeeper 说明](#install-from-a-github-release)。目前仅支持 MOMENTUM 4，所有通信和缓存均在本机完成，不需要账号或云服务。
 
 ## Contributing and security
 

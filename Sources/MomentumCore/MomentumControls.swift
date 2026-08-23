@@ -258,10 +258,10 @@ public enum MomentumLaunchPolicy {
     }
 
     public static func shouldUseAccessoryActivation(launchedAsLoginItem: Bool) -> Bool {
-        launchedAsLoginItem
+        true
     }
 
-    public static let shouldKeepDockIconAfterWindowCloses = true
+    public static let shouldKeepDockIconAfterWindowCloses = false
 }
 
 public enum MomentumCustomANCLevelPolicy {
@@ -303,6 +303,16 @@ public enum MomentumConnectionIndicatorPolicy {
     public static func style(isSwitching: Bool, isConnected: Bool) -> MomentumConnectionIndicatorStyle {
         if isSwitching { return .pulsingGreen }
         return isConnected ? .steadyGreen : .steadyGray
+    }
+}
+
+public enum MomentumRefreshPresentationPolicy {
+    public static func shouldBlock(hasSnapshot: Bool, hasControls: Bool) -> Bool {
+        !hasSnapshot || !hasControls
+    }
+
+    public static func shouldRefreshControls(hasControls: Bool) -> Bool {
+        !hasControls
     }
 }
 

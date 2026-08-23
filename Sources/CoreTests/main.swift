@@ -484,6 +484,26 @@ struct CoreTests {
         precondition(MomentumCustomANCLevelPolicy.levelToRestore(remembered: nil, fallback: 37) == 37)
         print("PASS custom ANC level memory across mode changes")
 
+        precondition(MomentumRefreshPresentationPolicy.shouldBlock(
+            hasSnapshot: false,
+            hasControls: false
+        ))
+        precondition(MomentumRefreshPresentationPolicy.shouldBlock(
+            hasSnapshot: true,
+            hasControls: false
+        ))
+        precondition(!MomentumRefreshPresentationPolicy.shouldBlock(
+            hasSnapshot: true,
+            hasControls: true
+        ))
+        precondition(MomentumRefreshPresentationPolicy.shouldRefreshControls(
+            hasControls: false
+        ))
+        precondition(!MomentumRefreshPresentationPolicy.shouldRefreshControls(
+            hasControls: true
+        ))
+        print("PASS cached controls keep panel interactive during background refresh")
+
         let firstUserProfile = MomentumUserEQProfile(
             id: UUID(uuidString: "00000000-0000-0000-0000-000000000001")!,
             name: "Mine",
@@ -651,10 +671,10 @@ struct CoreTests {
 
         precondition(MomentumLaunchPolicy.shouldShowWindow(launchedAsLoginItem: false))
         precondition(!MomentumLaunchPolicy.shouldShowWindow(launchedAsLoginItem: true))
-        precondition(!MomentumLaunchPolicy.shouldUseAccessoryActivation(launchedAsLoginItem: false))
+        precondition(MomentumLaunchPolicy.shouldUseAccessoryActivation(launchedAsLoginItem: false))
         precondition(MomentumLaunchPolicy.shouldUseAccessoryActivation(launchedAsLoginItem: true))
-        precondition(MomentumLaunchPolicy.shouldKeepDockIconAfterWindowCloses)
-        print("PASS interactive-versus-login launch and Dock policy")
+        precondition(!MomentumLaunchPolicy.shouldKeepDockIconAfterWindowCloses)
+        print("PASS interactive-versus-login menu bar launch policy")
 
         precondition(MomentumNoiseControlMode.resolve(ancEnabled: false, adaptiveEnabled: true) == .off)
         precondition(MomentumNoiseControlMode.resolve(ancEnabled: true, adaptiveEnabled: true) == .adaptive)

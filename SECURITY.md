@@ -6,7 +6,7 @@ M4 Companion is currently a Technical Preview. Security fixes are provided for t
 
 | Version | Supported |
 | --- | --- |
-| Latest v0.1.x release | ✅ |
+| Latest v0.2.x release | ✅ |
 | Older builds | ❌ |
 
 ## Reporting a vulnerability
@@ -36,4 +36,4 @@ General bugs and compatibility problems that do not expose sensitive information
 
 ## Technical Preview notice
 
-Published v0.1.0 binaries are ad-hoc signed and unnotarized. This is a distribution limitation, not a request to disable system-wide protections. Follow only the app-scoped Gatekeeper instructions in the README and obtain releases from this repository's official release page.
+Published v0.2.0 binaries are ad-hoc signed and unnotarized. This is a distribution limitation, not a request to disable system-wide protections. Follow only the app-scoped Gatekeeper instructions in the README and obtain releases from this repository's official release page.

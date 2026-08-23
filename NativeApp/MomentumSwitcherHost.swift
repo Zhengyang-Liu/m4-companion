@@ -24,6 +24,11 @@ struct MomentumSwitcherHostApp: App {
 }
 
 @MainActor
+private final class MenuPanel: NSPanel {
+    override var canBecomeKey: Bool { true }
+}
+
+@MainActor
 final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     private let updaterController = SPUStandardUpdaterController(
         startingUpdater: true,
@@ -34,6 +39,7 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         subsystem: "com.zhengyangliu.MomentumDeviceSwitcher",
         category: "WidgetAction"
     )
+
     private let client = MomentumHeadsetClient()
     private let actionToken: String = {
         let cached = (try? MomentumSnapshotStore.loadState())?.actionToken
@@ -44,7 +50,10 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }()
     private var refreshTask: Task<Void, Never>?
     private var isSwitching = false
-    private var mainWindow: NSWindow?
+    private var statusItem: NSStatusItem?
+    private var controlPanel: MenuPanel?
+    private var outsideClickMonitor: Any?
+    private var pendingPanelShow: DispatchWorkItem?
     private var mainViewModel: MomentumMainViewModel?
     private var widgetActionQueueWatcher: MomentumWidgetActionQueueWatcher?
 
@@ -53,6 +62,8 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
 
     func applicationDidFinishLaunching(_ notification: Notification) {
+        installMenuBarItem()
+        _ = NSApp.setActivationPolicy(.accessory)
         installWidgetActionWatcher()
         if SMAppService.mainApp.status == .notRegistered {
             try? SMAppService.mainApp.register()
@@ -75,17 +86,16 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         let launchedAsLoginItem = NSAppleEventManager.shared()
             .currentAppleEvent?
             .attributeDescriptor(forKeyword: keyAELaunchedAsLogInItem) != nil
-        if MomentumLaunchPolicy.shouldUseAccessoryActivation(
-            launchedAsLoginItem: launchedAsLoginItem
-        ) {
-            _ = NSApp.setActivationPolicy(.accessory)
-        }
         if MomentumLaunchPolicy.shouldShowWindow(launchedAsLoginItem: launchedAsLoginItem) {
-            showMainWindow()
+            showControlPanel(activatingApplication: true)
         }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        pendingPanelShow?.cancel()
+        if let outsideClickMonitor {
+            NSEvent.removeMonitor(outsideClickMonitor)
+        }
         removeWidgetActionWatcher()
         refreshTask?.cancel()
         mainViewModel?.stopAutomaticSync()
@@ -99,7 +109,7 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         _ sender: NSApplication,
         hasVisibleWindows flag: Bool
     ) -> Bool {
-        if !flag { showMainWindow() }
+        showControlPanel(activatingApplication: true)
         return true
     }
 
@@ -109,8 +119,38 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
     }
 
-    func windowWillClose(_ notification: Notification) {
-        mainViewModel?.stopAutomaticSync()
+    func windowDidResignKey(_ notification: Notification) {
+        guard let panel = notification.object as? MenuPanel,
+              panel === controlPanel else { return }
+        DispatchQueue.main.async { [weak self, weak panel] in
+            guard let self, let panel, panel.isVisible, !panel.isKeyWindow else { return }
+            self.closeControlPanel()
+        }
+    }
+
+    private func installMenuBarItem() {
+        guard statusItem == nil else { return }
+        let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
+        if let button = item.button {
+            let image = NSImage(
+                systemSymbolName: "headphones",
+                accessibilityDescription: "M4 Companion"
+            )
+            image?.isTemplate = true
+            button.image = image
+            button.toolTip = "M4 Companion"
+            button.target = self
+            button.action = #selector(toggleControlPanel)
+        }
+        statusItem = item
+    }
+
+    @objc private func toggleControlPanel() {
+        if controlPanel?.isVisible == true {
+            closeControlPanel()
+        } else {
+            showControlPanel(activatingApplication: false)
+        }
     }
 
     private func installWidgetActionWatcher() {
@@ -158,7 +198,31 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
     }
 
-    private func showMainWindow() {
+    private func showControlPanel(activatingApplication: Bool, retryCount: Int = 0) {
+        pendingPanelShow?.cancel()
+        pendingPanelShow = nil
+        guard let button = statusItem?.button,
+              let buttonWindow = button.window,
+              let screen = buttonWindow.screen else {
+            retryShowControlPanel(
+                activatingApplication: activatingApplication,
+                retryCount: retryCount
+            )
+            return
+        }
+        let anchorRect = buttonWindow.convertToScreen(button.convert(button.bounds, to: nil))
+        let screenFrame = screen.visibleFrame
+        guard anchorRect.width > 0,
+              anchorRect.height > 0,
+              screenFrame.contains(NSPoint(x: anchorRect.midX, y: screenFrame.midY)),
+              anchorRect.minY >= screenFrame.maxY - 2 else {
+            retryShowControlPanel(
+                activatingApplication: activatingApplication,
+                retryCount: retryCount
+            )
+            return
+        }
+
         let viewModel: MomentumMainViewModel
         if let existing = mainViewModel {
             viewModel = existing
@@ -169,31 +233,96 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             mainViewModel = viewModel
         }
 
-        if mainWindow == nil {
-            let controller = NSHostingController(rootView: MomentumMainView(model: viewModel))
-            let window = NSWindow(
-                contentRect: NSRect(x: 0, y: 0, width: 440, height: 700),
-                styleMask: [.titled, .closable, .miniaturizable, .resizable, .fullSizeContentView],
+        if controlPanel == nil {
+            let controller = NSHostingController(rootView: MomentumMainView(
+                model: viewModel,
+                checkForUpdates: { [weak self] in self?.checkForUpdates() },
+                quit: { NSApp.terminate(nil) }
+            ))
+            let panelSize = NSSize(width: 390, height: 700)
+            let panel = MenuPanel(
+                contentRect: NSRect(origin: .zero, size: panelSize),
+                styleMask: [.borderless, .nonactivatingPanel, .fullSizeContentView],
                 backing: .buffered,
                 defer: false
             )
-            window.title = "M4 Companion"
-            window.titlebarAppearsTransparent = true
-            window.titleVisibility = .hidden
-            window.minSize = NSSize(width: 420, height: 560)
-            window.maxSize = NSSize(width: 560, height: 900)
-            window.isReleasedWhenClosed = false
-            window.delegate = self
-            window.contentViewController = controller
-            window.center()
-            mainWindow = window
+            panel.isFloatingPanel = true
+            panel.isReleasedWhenClosed = false
+            panel.isOpaque = false
+            panel.backgroundColor = .clear
+            panel.hasShadow = true
+            panel.contentViewController = controller
+            panel.setContentSize(panelSize)
+            panel.contentView?.wantsLayer = true
+            panel.contentView?.layer?.cornerRadius = 14
+            panel.contentView?.layer?.cornerCurve = .continuous
+            panel.contentView?.layer?.masksToBounds = true
+            // Set these after isFloatingPanel/contentViewController, which otherwise
+            // reset the level and resize the panel to the SwiftUI intrinsic size.
+            panel.level = .popUpMenu
+            panel.collectionBehavior = [
+                .canJoinAllSpaces,
+                .fullScreenAuxiliary,
+                .ignoresCycle,
+                .stationary,
+                .transient,
+            ]
+            panel.delegate = self
+            controlPanel = panel
         }
 
-        _ = NSApp.setActivationPolicy(.regular)
-        mainWindow?.makeKeyAndOrderFront(nil)
-        NSApp.activate(ignoringOtherApps: true)
-        viewModel.startAutomaticSync()
-        Task { await viewModel.refresh() }
+        guard let controlPanel else { return }
+        if activatingApplication {
+            NSApp.activate(ignoringOtherApps: true)
+        }
+        if !controlPanel.isVisible {
+            let size = controlPanel.frame.size
+            let unclampedX = anchorRect.midX - size.width / 2
+            let x = min(max(unclampedX, screenFrame.minX + 8), screenFrame.maxX - size.width - 8)
+            let y = max(screenFrame.minY + 8, anchorRect.minY - size.height - 6)
+            controlPanel.setFrameOrigin(NSPoint(x: x, y: y))
+            controlPanel.makeKeyAndOrderFront(nil)
+            installOutsideClickMonitor()
+        }
+        Task { [weak controlPanel] in
+            await viewModel.refresh()
+            guard controlPanel?.isVisible == true else { return }
+            viewModel.startAutomaticSync()
+        }
+    }
+
+    private func retryShowControlPanel(activatingApplication: Bool, retryCount: Int) {
+        guard retryCount < 20 else { return }
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.showControlPanel(
+                activatingApplication: activatingApplication,
+                retryCount: retryCount + 1
+            )
+        }
+        pendingPanelShow = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(50), execute: workItem)
+    }
+
+    private func installOutsideClickMonitor() {
+        guard outsideClickMonitor == nil else { return }
+        outsideClickMonitor = NSEvent.addGlobalMonitorForEvents(
+            matching: [.leftMouseDown, .rightMouseDown]
+        ) { [weak self] _ in
+            Task { @MainActor [weak self] in
+                self?.closeControlPanel()
+            }
+        }
+    }
+
+    private func closeControlPanel() {
+        pendingPanelShow?.cancel()
+        pendingPanelShow = nil
+        controlPanel?.orderOut(nil)
+        if let outsideClickMonitor {
+            NSEvent.removeMonitor(outsideClickMonitor)
+            self.outsideClickMonitor = nil
+        }
+        mainViewModel?.stopAutomaticSync()
     }
 
     private func cache(_ snapshot: MomentumSnapshot) {
@@ -221,7 +350,7 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
 
         if url.host == "open" {
-            showMainWindow()
+            showControlPanel(activatingApplication: true)
         }
     }
 

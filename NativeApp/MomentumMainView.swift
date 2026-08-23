@@ -31,6 +31,7 @@ final class MomentumMainViewModel: ObservableObject {
     private var eqTasks: [UInt8: Task<Void, Never>] = [:]
     private var eqGenerations: [UInt8: Int] = [:]
     private var automaticSyncTask: Task<Void, Never>?
+    private var isRefreshing = false
     private var interactionGeneration = 0
     private var activeDeferredControl: String?
     private var rememberedCustomANCLevel: Int?
@@ -128,7 +129,7 @@ final class MomentumMainViewModel: ObservableObject {
     }
 
     private func syncExternalControlChanges() async {
-        guard !isLoading, busyAction == nil, activeDeferredWrites == 0 else { return }
+        guard !isRefreshing, !isLoading, busyAction == nil, activeDeferredWrites == 0 else { return }
         let startedAtGeneration = interactionGeneration
         do {
             let readback = try await client.controlsSnapshot()
@@ -147,15 +148,40 @@ final class MomentumMainViewModel: ObservableObject {
     }
 
     func refresh() async {
-        guard !isLoading, busyAction == nil, activeDeferredWrites == 0 else { return }
-        isLoading = true
+        guard !isRefreshing, busyAction == nil, activeDeferredWrites == 0 else { return }
+        let blocksPresentation = MomentumRefreshPresentationPolicy.shouldBlock(
+            hasSnapshot: snapshot != nil,
+            hasControls: controls != nil
+        )
+        let startedAtGeneration = interactionGeneration
+        isRefreshing = true
+        isLoading = blocksPresentation
         errorMessage = nil
-        defer { isLoading = false }
+        defer {
+            isRefreshing = false
+            isLoading = false
+        }
         do {
             let newSnapshot = try await client.snapshot()
+            let hasActiveUserOperation = busyAction != nil || activeDeferredWrites > 0
+            guard MomentumControlSyncPolicy.shouldApplyReadback(
+                startedAtGeneration: startedAtGeneration,
+                currentGeneration: interactionGeneration,
+                hasActiveUserOperation: hasActiveUserOperation
+            ) else { return }
             snapshot = newSnapshot
             cacheSnapshot(newSnapshot)
-            apply(try await client.controlsSnapshot())
+            guard MomentumRefreshPresentationPolicy.shouldRefreshControls(
+                hasControls: controls != nil
+            ) else { return }
+            let controlReadback = try await client.controlsSnapshot()
+            let hasActiveControlOperation = busyAction != nil || activeDeferredWrites > 0
+            guard MomentumControlSyncPolicy.shouldApplyReadback(
+                startedAtGeneration: startedAtGeneration,
+                currentGeneration: interactionGeneration,
+                hasActiveUserOperation: hasActiveControlOperation
+            ) else { return }
+            apply(controlReadback)
         } catch is CancellationError {
             return
         } catch {
@@ -523,10 +549,12 @@ final class MomentumMainViewModel: ObservableObject {
 
 struct MomentumMainView: View {
     @ObservedObject var model: MomentumMainViewModel
+    let checkForUpdates: () -> Void
+    let quit: () -> Void
     @State private var showingSaveEQProfile = false
     @State private var newEQProfileName = ""
 
-    private let accent = Color(red: 1.0, green: 0.38, blue: 0.05)
+    private let accent = Color(red: 10.0 / 255.0, green: 150.0 / 255.0, blue: 212.0 / 255.0)
     private let pageBackground = Color(red: 0.07, green: 0.07, blue: 0.075)
     private let cardBackground = Color(red: 0.12, green: 0.12, blue: 0.13)
 
@@ -542,6 +570,7 @@ struct MomentumMainView: View {
                     connectionCard
                     noiseControlCard
                     equalizerCard
+                    controlPanelFooter
                 }
                 .padding(.horizontal, 18)
                 .padding(.top, 18)
@@ -553,7 +582,7 @@ struct MomentumMainView: View {
                     .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14))
             }
         }
-        .frame(minWidth: 420, idealWidth: 440, minHeight: 560, idealHeight: 700)
+        .frame(minWidth: 370, idealWidth: 390, minHeight: 560, idealHeight: 700)
         .preferredColorScheme(.dark)
         .tint(accent)
         .alert("Save EQ Profile", isPresented: $showingSaveEQProfile) {
@@ -570,6 +599,19 @@ struct MomentumMainView: View {
             Text("Save the current EQ settings as a reusable profile.")
         }
 
+    }
+
+    private var controlPanelFooter: some View {
+        HStack {
+            Button("Check for Updates…", action: checkForUpdates)
+                .buttonStyle(.plain)
+            Spacer()
+            Button("Quit M4 Companion", action: quit)
+                .buttonStyle(.plain)
+        }
+        .font(.caption)
+        .foregroundStyle(.secondary)
+        .padding(.horizontal, 4)
     }
 
     private var header: some View {

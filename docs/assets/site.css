@@ -5,8 +5,8 @@
   --ink: #1d1d1f;
   --muted: #65656a;
   --line: #dedee2;
-  --accent: #f05a22;
-  --accent-hover: #d94b17;
+  --accent: #0a96d4;
+  --accent-hover: #087fb4;
   --max: 1120px;
   --gutter: clamp(20px, 5vw, 56px);
 }
