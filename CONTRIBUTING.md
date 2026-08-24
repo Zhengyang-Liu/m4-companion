@@ -7,7 +7,7 @@ Thanks for helping improve M4 Companion. Contributions can include bug fixes, te
 - Search [existing issues](https://github.com/Zhengyang-Liu/m4-companion/issues) before opening a new one.
 - For a substantial change, open an issue first so the approach and hardware impact can be discussed.
 - Report security problems privately as described in [SECURITY.md](SECURITY.md).
-- Remember that v0.2.1 supports MOMENTUM 4 only; do not claim compatibility with another model without repeatable hardware validation.
+- Remember that v0.2.2 supports MOMENTUM 4 only; do not claim compatibility with another model without repeatable hardware validation.
 
 ## Development setup
 

@@ -4,6 +4,17 @@ All notable changes to M4 Companion are documented here.
 
 ## Unreleased
 
+## [0.2.2] - 2026-08-24
+
+### Added
+
+- Added **Podcast** as a third selectable Sound Mode alongside Equalizer and Sound Personalization.
+
+### Fixed
+
+- Recognized the headset's valid `Off` (`00 00`) and `Podcast` (`00 02`) audio-mode responses instead of reporting malformed control data for command `0x0804`.
+- Allowed users to switch directly from Podcast to Equalizer or Sound Personalization in M4 Companion.
+
 ## [0.2.1] - 2026-08-23
 
 ### Fixed
@@ -46,6 +57,7 @@ All notable changes to M4 Companion are documented here.
 
 The v0.1.0 binary is ad-hoc signed and not notarized. Follow the app-scoped Gatekeeper instructions in the README. A clean local reinstall from the release-style DMG was tested with the host app and WidgetKit widget both functioning after quarantine removal.
 
+[0.2.2]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.2
 [0.2.1]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.1
 [0.2.0]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.0
 [0.1.0]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.1.0
