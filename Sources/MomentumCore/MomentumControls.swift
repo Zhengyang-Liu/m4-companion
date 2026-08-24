@@ -1,12 +1,22 @@
 import Foundation
 
 public enum MomentumSoundMode: UInt8, Codable, CaseIterable, Sendable {
+    case off = 0
     case equalizer = 1
+    case podcast = 2
     case soundPersonalization = 3
+
+    public static let selectableModes: [MomentumSoundMode] = [
+        .equalizer,
+        .podcast,
+        .soundPersonalization
+    ]
 
     public var displayName: String {
         switch self {
+        case .off: "Off"
         case .equalizer: "Equalizer"
+        case .podcast: "Podcast"
         case .soundPersonalization: "Sound Personalization"
         }
     }

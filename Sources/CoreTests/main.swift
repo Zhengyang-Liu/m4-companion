@@ -370,11 +370,21 @@ struct CoreTests {
         precondition(betterAudioMode == .betterAudio)
         precondition(betterCompatibilityMode == .betterCompatibility)
 
+        let offSoundMode = try MomentumControlCodec.parseSoundMode(Data([0, 0]))
         let equalizerSoundMode = try MomentumControlCodec.parseSoundMode(Data([0, 1]))
+        let podcastSoundMode = try MomentumControlCodec.parseSoundMode(Data([0, 2]))
         let personalizedSoundMode = try MomentumControlCodec.parseSoundMode(Data([0, 3]))
+        precondition(offSoundMode == .off)
         precondition(equalizerSoundMode == .equalizer)
+        precondition(podcastSoundMode == .podcast)
         precondition(personalizedSoundMode == .soundPersonalization)
+        precondition(MomentumSoundMode.selectableModes == [
+            .equalizer,
+            .podcast,
+            .soundPersonalization
+        ])
         precondition(MomentumControlCodec.encodeAudioMode(.equalizer) == Data([0, 1]))
+        precondition(MomentumControlCodec.encodeAudioMode(.podcast) == Data([0, 2]))
         precondition(MomentumControlCodec.encodeAudioMode(.soundPersonalization) == Data([0, 3]))
         precondition(MomentumSoundModeTransitionPolicy.reached(
             desired: .soundPersonalization,
@@ -395,7 +405,7 @@ struct CoreTests {
             _ = try MomentumControlCodec.parseSoundMode(Data([1, 3]))
             preconditionFailure("Sound mode prefix must be zero")
         } catch MomentumProtocolError.malformedControlPayload(command: MomentumCommands.getSoundMode) {
-            print("PASS Equalizer and Sound Personalization codec")
+            print("PASS Off, Equalizer, Podcast, and Sound Personalization codec")
         }
 
         let modes = try MomentumControlCodec.parseAncModes(Data([3, 1, 1, 2, 2, 0]))

@@ -753,8 +753,9 @@ struct MomentumMainView: View {
                     get: { model.soundMode },
                     set: { model.setSoundMode($0) }
                 )) {
-                    Text("Equalizer").tag(MomentumSoundMode.equalizer)
-                    Text("Sound Personalization").tag(MomentumSoundMode.soundPersonalization)
+                    ForEach(MomentumSoundMode.selectableModes, id: \.self) { mode in
+                        Text(mode.displayName).tag(mode)
+                    }
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
