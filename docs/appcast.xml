@@ -6,6 +6,15 @@
         <description>M4 Companion release updates</description>
         <language>en</language>
         <item>
+            <title>0.2.2</title>
+            <pubDate>Mon, 24 Aug 2026 08:35:54 -0700</pubDate>
+            <link>https://zhengyang-liu.github.io/m4-companion/</link>
+            <sparkle:version>16</sparkle:version>
+            <sparkle:shortVersionString>0.2.2</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/Zhengyang-Liu/m4-companion/releases/download/v0.2.2/M4-Companion-0.2.2-Technical-Preview.dmg" length="2614012" type="application/octet-stream" sparkle:edSignature="UVsUQE6jTyclTFi50555pFSveynN+8qhDyYDzD/VRz/dZgcsCHLpHiod1GdaZEFZgdCBJ+d3JQaFMCw718LMBA=="/>
+        </item>
+        <item>
             <title>0.2.1</title>
             <pubDate>Sun, 23 Aug 2026 08:28:16 -0700</pubDate>
             <link>https://zhengyang-liu.github.io/m4-companion/</link>
