@@ -4,6 +4,17 @@ All notable changes to M4 Companion are documented here.
 
 ## Unreleased
 
+## [0.2.3] - 2026-09-24
+
+### Fixed
+
+- Prevented the control panel from stretching horizontally and clipping its contents after clicking controls.
+- Kept all three Sound Mode labels visible within the compact panel by using label-proportional native segments.
+
+### Tests
+
+- Added native AppKit layout regression coverage for every Sound Mode and busy-state transition, selection bindings, disabled actions, and accessibility labeling.
+
 ## [0.2.2] - 2026-08-24
 
 ### Added
@@ -57,6 +68,7 @@ All notable changes to M4 Companion are documented here.
 
 The v0.1.0 binary is ad-hoc signed and not notarized. Follow the app-scoped Gatekeeper instructions in the README. A clean local reinstall from the release-style DMG was tested with the host app and WidgetKit widget both functioning after quarantine removal.
 
+[0.2.3]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.3
 [0.2.2]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.2
 [0.2.1]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.1
 [0.2.0]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.0

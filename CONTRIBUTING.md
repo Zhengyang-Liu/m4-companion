@@ -7,7 +7,7 @@ Thanks for helping improve M4 Companion. Contributions can include bug fixes, te
 - Search [existing issues](https://github.com/Zhengyang-Liu/m4-companion/issues) before opening a new one.
 - For a substantial change, open an issue first so the approach and hardware impact can be discussed.
 - Report security problems privately as described in [SECURITY.md](SECURITY.md).
-- Remember that v0.2.2 supports MOMENTUM 4 only; do not claim compatibility with another model without repeatable hardware validation.
+- Remember that v0.2.3 supports MOMENTUM 4 only; do not claim compatibility with another model without repeatable hardware validation.
 
 ## Development setup
 
@@ -49,6 +49,17 @@ xcodebuild \
 ```
 
 The build command may require your local signing configuration. Do not work around that by committing credentials or provisioning artifacts.
+
+For panel layout regressions, build the frameworks into a known directory, then run the native AppKit harness in a logged-in macOS desktop session:
+
+```bash
+xcodebuild -project MomentumDeviceSwitcher.xcodeproj \
+  -scheme MomentumDeviceSwitcher -configuration Release \
+  -derivedDataPath .release-build CODE_SIGNING_ALLOWED=NO build
+python3 scripts/test-panel-layout.py
+```
+
+The harness does not perform Bluetooth I/O. It checks layout and native control bindings; real mouse clicks on the installed app remain a separate UI verification step.
 
 Hardware testing must be deliberate:
 

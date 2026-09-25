@@ -749,16 +749,10 @@ struct MomentumMainView: View {
     private var equalizerCard: some View {
         card(title: "Sound Mode", symbol: "slider.vertical.3") {
             VStack(spacing: 14) {
-                Picker("Sound Mode", selection: Binding(
+                MomentumSoundModePicker(selection: Binding(
                     get: { model.soundMode },
                     set: { model.setSoundMode($0) }
-                )) {
-                    ForEach(MomentumSoundMode.selectableModes, id: \.self) { mode in
-                        Text(mode.displayName).tag(mode)
-                    }
-                }
-                .pickerStyle(.segmented)
-                .labelsHidden()
+                ))
                 .disabled(model.isBusy || model.controls == nil)
 
                 if model.soundMode == .soundPersonalization {
@@ -882,6 +876,55 @@ struct MomentumMainView: View {
         case 26...50: return "battery.50percent"
         case 1...25: return "battery.25percent"
         default: return "battery.0percent"
+        }
+    }
+}
+
+/// SwiftUI's segmented Picker uses equal-width intrinsic sizing. With the long
+/// Sound Personalization label it advertises 477pt for a 322pt slot, and native
+/// mouse-driven relayout can expand the entire scroll view. Keep native keyboard/
+/// accessibility behavior, but distribute segment widths by their actual labels.
+private struct MomentumSoundModePicker: NSViewRepresentable {
+    @Binding var selection: MomentumSoundMode
+    @Environment(\.isEnabled) private var isEnabled
+
+    func makeCoordinator() -> Coordinator { Coordinator(selection: $selection) }
+
+    func makeNSView(context: Context) -> NSSegmentedControl {
+        let control = NSSegmentedControl(
+            labels: MomentumSoundMode.selectableModes.map(\.displayName),
+            trackingMode: .selectOne,
+            target: context.coordinator,
+            action: #selector(Coordinator.selectMode(_:))
+        )
+        control.segmentDistribution = .fill
+        control.selectedSegmentBezelColor = NSColor(
+            red: 10.0 / 255.0, green: 150.0 / 255.0, blue: 212.0 / 255.0, alpha: 1
+        )
+        control.setAccessibilityLabel("Sound Mode")
+        return control
+    }
+
+    func updateNSView(_ control: NSSegmentedControl, context: Context) {
+        context.coordinator.selection = $selection
+        control.selectedSegment = MomentumSoundMode.selectableModes.firstIndex(of: selection) ?? -1
+        control.isEnabled = isEnabled
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, nsView: NSSegmentedControl, context: Context) -> CGSize? {
+        let natural = nsView.intrinsicContentSize
+        return CGSize(width: proposal.width ?? natural.width, height: natural.height)
+    }
+
+    @MainActor final class Coordinator: NSObject {
+        var selection: Binding<MomentumSoundMode>
+
+        init(selection: Binding<MomentumSoundMode>) { self.selection = selection }
+
+        @objc func selectMode(_ control: NSSegmentedControl) {
+            guard control.isEnabled,
+                  MomentumSoundMode.selectableModes.indices.contains(control.selectedSegment) else { return }
+            selection.wrappedValue = MomentumSoundMode.selectableModes[control.selectedSegment]
         }
     }
 }
