@@ -8,7 +8,7 @@ A native macOS menu bar companion for managing a Sennheiser MOMENTUM 4: switch m
 
 > **v0.2.3 Technical Preview** — currently supports **MOMENTUM 4 only**. The downloadable build is ad-hoc signed and not notarized; review the [installation note](#install-from-a-github-release) before running it.
 
-[Download Technical Preview](https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.3) · [Report a bug](https://github.com/Zhengyang-Liu/m4-companion/issues) · [中文速览](#中文速览)
+[Download Technical Preview](https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.3) · [Report a bug](https://github.com/Zhengyang-Liu/m4-companion/issues)
 
 ## Screenshots
 
@@ -196,10 +196,6 @@ The target device may be asleep, out of range, or refusing a connection. M4 Comp
 - Additional headset models only after protocol behavior is independently verified and safely tested.
 
 Roadmap items are intentions, not commitments.
-
-## 中文速览
-
-M4 Companion 是一个面向 macOS 14+ 的 MOMENTUM 4 非官方菜单栏工具，可切换双设备连接、查看电量、调节降噪/通透/EQ，并提供中号与大号桌面小组件。v0.2.3 是未公证的技术预览版；安装前请阅读[安装与 Gatekeeper 说明](#install-from-a-github-release)。目前仅支持 MOMENTUM 4，所有通信和缓存均在本机完成，不需要账号或云服务。
 
 ## Contributing and security
 
