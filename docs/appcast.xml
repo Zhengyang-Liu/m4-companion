@@ -6,6 +6,15 @@
         <description>M4 Companion release updates</description>
         <language>en</language>
         <item>
+            <title>0.2.3</title>
+            <pubDate>Thu, 24 Sep 2026 22:05:27 -0700</pubDate>
+            <link>https://zhengyang-liu.github.io/m4-companion/</link>
+            <sparkle:version>17</sparkle:version>
+            <sparkle:shortVersionString>0.2.3</sparkle:shortVersionString>
+            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
+            <enclosure url="https://github.com/Zhengyang-Liu/m4-companion/releases/download/v0.2.3/M4-Companion-0.2.3-Technical-Preview.dmg" length="2610258" type="application/octet-stream" sparkle:edSignature="EBhbmc+riH78EALaBgNzV2CoJ15BR0V61erHc9B4on3Bv7o4o6t9ovrlbK/SK5GuE+yH6W1di0gthxOPy7fnBw=="/>
+        </item>
+        <item>
             <title>0.2.2</title>
             <pubDate>Mon, 24 Aug 2026 08:35:54 -0700</pubDate>
             <link>https://zhengyang-liu.github.io/m4-companion/</link>
@@ -22,15 +31,6 @@
             <sparkle:shortVersionString>0.2.1</sparkle:shortVersionString>
             <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
             <enclosure url="https://github.com/Zhengyang-Liu/m4-companion/releases/download/v0.2.1/M4-Companion-0.2.1-Technical-Preview.dmg" length="2612404" type="application/octet-stream" sparkle:edSignature="KfOA3zAA7/1/bNOTnbH9TGGbGr81agS3bkeqfTW1Dwmhp7wPcl5Ic6rTZYLbKk2ko7RUpxVMW+KsWyYoh/j3Cg=="/>
-        </item>
-        <item>
-            <title>0.2.0</title>
-            <pubDate>Sat, 22 Aug 2026 20:40:50 -0700</pubDate>
-            <link>https://zhengyang-liu.github.io/m4-companion/</link>
-            <sparkle:version>14</sparkle:version>
-            <sparkle:shortVersionString>0.2.0</sparkle:shortVersionString>
-            <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-            <enclosure url="https://github.com/Zhengyang-Liu/m4-companion/releases/download/v0.2.0/M4-Companion-0.2.0-Technical-Preview.dmg" length="2611632" type="application/octet-stream" sparkle:edSignature="081D39Iy/Sy0HKmSMVCaky9B+yPilcqTn3kGBfnxPBpJw8xN97CjTftQk5ljvsr7iwgCqEYnI9L/W89GZB9lDA=="/>
         </item>
     </channel>
 </rss>
