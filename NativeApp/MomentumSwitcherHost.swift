@@ -293,11 +293,8 @@ final class HostDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
             controlPanel.makeKeyAndOrderFront(nil)
             installOutsideClickMonitor()
         }
-        Task { [weak controlPanel] in
-            await viewModel.refresh()
-            guard controlPanel?.isVisible == true else { return }
-            viewModel.startAutomaticSync()
-        }
+        viewModel.startAutomaticSync()
+        Task { await viewModel.refresh() }
     }
 
     private func retryShowControlPanel(activatingApplication: Bool, retryCount: Int) {

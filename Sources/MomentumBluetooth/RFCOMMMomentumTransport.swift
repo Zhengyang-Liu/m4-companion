@@ -20,7 +20,7 @@ public enum MomentumBluetoothError: LocalizedError {
         case .serviceUnavailable: return "The MOMENTUM 4 GAIA control service is unavailable."
         case .connectionTimedOut: return "Timed out opening the MOMENTUM 4 control channel."
         case let .rfcommFailure(status): return String(format: "Bluetooth RFCOMM failed (0x%08x).", UInt32(bitPattern: status))
-        case .notConnected: return "The MOMENTUM 4 control channel is not connected."
+        case .notConnected: return "MOMENTUM 4 is not connected to this Mac. Connect it in Bluetooth settings."
         case let .responseTimedOut(command): return "The headphones did not answer command 0x\(String(command, radix: 16))."
         case let .switchFailed(message): return message
         case let .eqBatchRollbackFailed(original, failedBands):
@@ -47,6 +47,7 @@ public enum MomentumHeadsetAddressResolver {
         guard let candidate = candidates.first else {
             throw MomentumBluetoothError.headsetNotPaired
         }
+        guard candidate.isConnected else { throw MomentumBluetoothError.notConnected }
         return candidate.address
     }
 }
@@ -86,7 +87,9 @@ final class RFCOMMMomentumTransport: NSObject, @preconcurrency IOBluetoothRFCOMM
             }), let address = match.addressString else {
                 throw MomentumBluetoothError.headsetNotPaired
             }
-            return address
+            return try MomentumHeadsetAddressResolver.resolve([
+                MomentumHeadsetCandidate(address: address, isConnected: match.isConnected())
+            ])
         }
         return try MomentumHeadsetAddressResolver.resolve(matching.compactMap { device in
             guard let address = device.addressString else { return nil }

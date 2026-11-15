@@ -170,6 +170,16 @@ struct CoreTests {
         print("PASS unique headset selection")
         do {
             _ = try MomentumHeadsetAddressResolver.resolve([
+                MomentumHeadsetCandidate(address: "AA-BB-CC-DD-EE-FF", isConnected: false)
+            ])
+            throw NSError(domain: "Regression", code: 1, userInfo: [
+                NSLocalizedDescriptionKey: "Offline paired headphones must be rejected before opening RFCOMM"
+            ])
+        } catch MomentumBluetoothError.notConnected {
+            print("PASS offline paired headset fails immediately")
+        }
+        do {
+            _ = try MomentumHeadsetAddressResolver.resolve([
                 MomentumHeadsetCandidate(address: "AA", isConnected: true),
                 MomentumHeadsetCandidate(address: "BB", isConnected: false)
             ])

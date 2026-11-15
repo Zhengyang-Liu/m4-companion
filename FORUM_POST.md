@@ -16,9 +16,9 @@ It is a native, open-source macOS app for Sennheiser MOMENTUM 4 with:
 
 Everything runs locally over Bluetooth. There is no account, cloud backend, telemetry, or analytics.
 
-**Current status:** v0.2.3 Technical Preview for macOS 14+. The DMG is ad-hoc signed and not notarized, so macOS may require **Open Anyway** or the scoped quarantine command documented in the README. I clean-tested the release-style DMG locally; the menu bar app and WidgetKit widget both loaded and worked after the bypass.
+**Current status:** v0.2.4 Technical Preview for macOS 14+. The DMG is ad-hoc signed and not notarized, so macOS may require **Open Anyway** or the scoped quarantine command documented in the README. I clean-tested the release-style DMG locally; the menu bar app and WidgetKit widget both loaded and worked after the bypass.
 
-Download: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.3
+Download: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.4
 
 Source: https://github.com/Zhengyang-Liu/m4-companion
 

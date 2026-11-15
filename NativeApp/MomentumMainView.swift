@@ -8,6 +8,7 @@ final class MomentumMainViewModel: ObservableObject {
     private static let rememberedCustomANCLevelKey = "rememberedCustomANCLevel"
     private static let userEQProfilesKey = "userEQProfiles.v1"
 
+    @Published private(set) var isHeadsetConnected = false
     @Published private(set) var snapshot: MomentumSnapshot?
     @Published private(set) var controls: MomentumControlsSnapshot?
     @Published private(set) var isLoading = false
@@ -25,12 +26,16 @@ final class MomentumMainViewModel: ObservableObject {
     @Published var bassBoostEnabled = false
 
     private let client: MomentumHeadsetClient
+    private let connectionAvailable: () -> Bool
+    private let readSnapshot: () async throws -> MomentumSnapshot
+    private let readControls: () async throws -> MomentumControlsSnapshot
     private let cacheSnapshot: (MomentumSnapshot) -> Void
     private var transparencyTask: Task<Void, Never>?
     private var transparencyGeneration = 0
     private var eqTasks: [UInt8: Task<Void, Never>] = [:]
     private var eqGenerations: [UInt8: Int] = [:]
     private var automaticSyncTask: Task<Void, Never>?
+    private var connectionMonitorTask: Task<Void, Never>?
     private var isRefreshing = false
     private var interactionGeneration = 0
     private var activeDeferredControl: String?
@@ -38,9 +43,15 @@ final class MomentumMainViewModel: ObservableObject {
 
     init(
         client: MomentumHeadsetClient,
+        connectionAvailable: (() -> Bool)? = nil,
+        readSnapshot: (() async throws -> MomentumSnapshot)? = nil,
+        readControls: (() async throws -> MomentumControlsSnapshot)? = nil,
         cacheSnapshot: @escaping (MomentumSnapshot) -> Void
     ) {
         self.client = client
+        self.connectionAvailable = connectionAvailable ?? { client.isHeadsetConnected }
+        self.readSnapshot = readSnapshot ?? { try await client.snapshot() }
+        self.readControls = readControls ?? { try await client.controlsSnapshot() }
         self.cacheSnapshot = cacheSnapshot
         if let stored = UserDefaults.standard.object(
             forKey: Self.rememberedCustomANCLevelKey
@@ -63,8 +74,12 @@ final class MomentumMainViewModel: ObservableObject {
         isLoading || busyAction != nil || activeDeferredWrites > 0
     }
 
+    var canControlHeadset: Bool {
+        isHeadsetConnected && controls != nil
+    }
+
     var isEqualizerActive: Bool {
-        controls != nil && soundMode == .equalizer
+        canControlHeadset && soundMode == .equalizer
     }
 
     var orderedDevices: [MomentumDevice] {
@@ -97,7 +112,7 @@ final class MomentumMainViewModel: ObservableObject {
 
     func canEditDeferredControl(_ controlID: String) -> Bool {
         let soundModeAllowsEditing = !controlID.hasPrefix("eq-") || isEqualizerActive
-        return soundModeAllowsEditing
+        return canControlHeadset && soundModeAllowsEditing
             && !isLoading
             && busyAction == nil
             && MomentumDeferredWritePolicy.acceptsDraft(
@@ -106,8 +121,40 @@ final class MomentumMainViewModel: ObservableObject {
             )
     }
 
+    /// Recheck the Bluetooth link without opening a control channel.
+    @discardableResult
+    func checkConnection() -> Bool {
+        guard connectionAvailable() else {
+            if isRefreshing || isHeadsetConnected || snapshot != nil || controls != nil || activeDeferredWrites > 0 {
+                interactionGeneration += 1
+                transparencyGeneration += 1
+                transparencyTask?.cancel()
+                transparencyTask = nil
+                cancelEQDebounces()
+                activeDeferredControl = nil
+                activeDeferredWrites = 0
+            }
+            isHeadsetConnected = false
+            snapshot = nil
+            controls = nil
+            eqGains = []
+            errorMessage = nil
+            return false
+        }
+        return true
+    }
+
     func startAutomaticSync() {
         guard automaticSyncTask == nil else { return }
+        checkConnection()
+        connectionMonitorTask = Task { [weak self] in
+            while !Task.isCancelled {
+                do { try await Task.sleep(for: .seconds(1)) }
+                catch { return }
+                guard let self, !Task.isCancelled else { return }
+                self.checkConnection()
+            }
+        }
         automaticSyncTask = Task { [weak self] in
             while !Task.isCancelled {
                 do {
@@ -126,13 +173,20 @@ final class MomentumMainViewModel: ObservableObject {
     func stopAutomaticSync() {
         automaticSyncTask?.cancel()
         automaticSyncTask = nil
+        connectionMonitorTask?.cancel()
+        connectionMonitorTask = nil
     }
 
-    private func syncExternalControlChanges() async {
+    func syncExternalControlChanges() async {
+        guard checkConnection() else { return }
+        if !isHeadsetConnected || controls == nil {
+            await refresh()
+            return
+        }
         guard !isRefreshing, !isLoading, busyAction == nil, activeDeferredWrites == 0 else { return }
         let startedAtGeneration = interactionGeneration
         do {
-            let readback = try await client.controlsSnapshot()
+            let readback = try await readControls()
             let hasActiveUserOperation = isLoading || busyAction != nil || activeDeferredWrites > 0
             guard MomentumControlSyncPolicy.shouldApplyReadback(
                 startedAtGeneration: startedAtGeneration,
@@ -143,11 +197,14 @@ final class MomentumMainViewModel: ObservableObject {
         } catch is CancellationError {
             return
         } catch {
-            // Phone-side synchronization is best effort; keep the last good UI state.
+            guard checkConnection() else { return }
+            // Do not keep authorizing writes from a control session that cannot be read.
+            controls = nil
         }
     }
 
     func refresh() async {
+        guard checkConnection() else { return }
         guard !isRefreshing, busyAction == nil, activeDeferredWrites == 0 else { return }
         let blocksPresentation = MomentumRefreshPresentationPolicy.shouldBlock(
             hasSnapshot: snapshot != nil,
@@ -162,19 +219,21 @@ final class MomentumMainViewModel: ObservableObject {
             isLoading = false
         }
         do {
-            let newSnapshot = try await client.snapshot()
+            let newSnapshot = try await readSnapshot()
+            guard checkConnection() else { return }
             let hasActiveUserOperation = busyAction != nil || activeDeferredWrites > 0
             guard MomentumControlSyncPolicy.shouldApplyReadback(
                 startedAtGeneration: startedAtGeneration,
                 currentGeneration: interactionGeneration,
                 hasActiveUserOperation: hasActiveUserOperation
             ) else { return }
+            isHeadsetConnected = true
             snapshot = newSnapshot
             cacheSnapshot(newSnapshot)
             guard MomentumRefreshPresentationPolicy.shouldRefreshControls(
                 hasControls: controls != nil
             ) else { return }
-            let controlReadback = try await client.controlsSnapshot()
+            let controlReadback = try await readControls()
             let hasActiveControlOperation = busyAction != nil || activeDeferredWrites > 0
             guard MomentumControlSyncPolicy.shouldApplyReadback(
                 startedAtGeneration: startedAtGeneration,
@@ -185,6 +244,8 @@ final class MomentumMainViewModel: ObservableObject {
         } catch is CancellationError {
             return
         } catch {
+            guard checkConnection(), startedAtGeneration == interactionGeneration else { return }
+            controls = nil
             errorMessage = error.localizedDescription
         }
     }
@@ -194,7 +255,8 @@ final class MomentumMainViewModel: ObservableObject {
     }
 
     func togglePeer(_ device: MomentumDevice) {
-        guard !isLoading,
+        guard checkConnection(), isHeadsetConnected,
+              !isLoading,
               busyAction == nil,
               activeDeferredWrites == 0,
               let current = snapshot,
@@ -213,11 +275,14 @@ final class MomentumMainViewModel: ObservableObject {
                 } else {
                     authoritative = try await client.switchPeer(to: device.index, expectedName: device.name)
                 }
+                guard checkConnection() else { return }
                 snapshot = authoritative
                 cacheSnapshot(authoritative)
             } catch is CancellationError {
+                guard checkConnection() else { return }
                 snapshot = current
             } catch {
+                guard checkConnection() else { return }
                 snapshot = current
                 errorMessage = error.localizedDescription
             }
@@ -286,7 +351,8 @@ final class MomentumMainViewModel: ObservableObject {
 
     func setTransparencyDraft(_ value: Double) {
         let controlID = "transparency"
-        guard busyAction == nil,
+        guard checkConnection(), canControlHeadset,
+              busyAction == nil,
               !isLoading,
               MomentumDeferredWritePolicy.acceptsDraft(
                   activeControl: activeDeferredControl,
@@ -331,7 +397,7 @@ final class MomentumMainViewModel: ObservableObject {
 
     func setEqDraft(index: Int, gain: Double) {
         let controlID = "eq-\(index)"
-        guard isEqualizerActive,
+        guard checkConnection(), isEqualizerActive,
               busyAction == nil,
               !isLoading,
               MomentumDeferredWritePolicy.acceptsDraft(
@@ -414,7 +480,7 @@ final class MomentumMainViewModel: ObservableObject {
     }
 
     private func applyEQPreset(named name: String, gains: [Double]) {
-        guard isEqualizerActive,
+        guard checkConnection(), isEqualizerActive,
               !isLoading,
               busyAction == nil,
               activeDeferredWrites == 0,
@@ -440,7 +506,8 @@ final class MomentumMainViewModel: ObservableObject {
         optimistic: () -> Void,
         operation: @escaping () async throws -> MomentumControlsSnapshot
     ) {
-        guard !isLoading, busyAction == nil, activeDeferredWrites == 0 else { return }
+        guard checkConnection(), canControlHeadset,
+              !isLoading, busyAction == nil, activeDeferredWrites == 0 else { return }
         interactionGeneration += 1
         busyAction = action
         errorMessage = nil
@@ -456,6 +523,7 @@ final class MomentumMainViewModel: ObservableObject {
     }
 
     private func apply(_ snapshot: MomentumControlsSnapshot) {
+        guard checkConnection(), isHeadsetConnected else { return }
         controls = snapshot
         soundMode = snapshot.soundMode
         let updatedCustomLevel = MomentumCustomANCLevelPolicy.updatedRememberedLevel(
@@ -525,16 +593,17 @@ final class MomentumMainViewModel: ObservableObject {
         after operationError: Error,
         ifCurrent: @escaping @MainActor () -> Bool = { true }
     ) async {
+        guard checkConnection(), ifCurrent() else { return }
         do {
-            let recovery = Task { @MainActor [client] in
-                try await client.controlsSnapshot()
+            let recovery = Task { @MainActor [readControls] in
+                try await readControls()
             }
             let authoritative = try await recovery.value
-            guard ifCurrent() else { return }
+            guard checkConnection(), ifCurrent() else { return }
             apply(authoritative)
             errorMessage = "Control update failed: \(operationError.localizedDescription) The headphone state was reloaded."
         } catch {
-            guard ifCurrent() else { return }
+            guard checkConnection(), ifCurrent() else { return }
             controls = nil
             errorMessage = "Control update failed: \(operationError.localizedDescription) State recovery also failed: \(error.localizedDescription) Displayed values are unverified."
         }
@@ -626,12 +695,12 @@ struct MomentumMainView: View {
             VStack(alignment: .leading, spacing: 3) {
                 Text("MOMENTUM 4")
                     .font(.title2.weight(.bold))
-                Text(model.snapshot == nil ? "Not available" : "Connected")
+                Text(model.isHeadsetConnected ? "Connected" : "Not connected")
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
             Spacer()
-            if let battery = model.snapshot?.batteryPercentage {
+            if model.isHeadsetConnected, let battery = model.snapshot?.batteryPercentage {
                 Label("\(battery)%", systemImage: batterySymbol(battery))
                     .font(.subheadline.weight(.semibold))
                     .foregroundStyle(battery < 20 ? .red : .primary)
@@ -645,7 +714,12 @@ struct MomentumMainView: View {
 
     private var connectionCard: some View {
         card(title: "Connections", symbol: "link") {
-            if model.orderedDevices.isEmpty {
+            if !model.isHeadsetConnected {
+                Text("Connect MOMENTUM 4 to this Mac in Bluetooth settings. Controls will be available after connecting.")
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            } else if model.orderedDevices.isEmpty {
                 Text("No paired devices available")
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -689,7 +763,7 @@ struct MomentumMainView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .disabled(isOwn || model.isBusy)
+        .disabled(!model.isHeadsetConnected || isOwn || model.isBusy)
     }
 
     private var noiseControlCard: some View {
@@ -708,7 +782,7 @@ struct MomentumMainView: View {
                 }
                 .pickerStyle(.segmented)
                 .labelsHidden()
-                .disabled(model.isBusy || model.controls == nil)
+                .disabled(model.isBusy || !model.canControlHeadset)
 
                 VStack(spacing: 6) {
                     HStack {
@@ -740,7 +814,7 @@ struct MomentumMainView: View {
                     }
                     .pickerStyle(.segmented)
                     .labelsHidden()
-                    .disabled(model.isBusy || model.controls == nil)
+                    .disabled(model.isBusy || !model.canControlHeadset)
                 }
             }
         }
@@ -753,7 +827,7 @@ struct MomentumMainView: View {
                     get: { model.soundMode },
                     set: { model.setSoundMode($0) }
                 ))
-                .disabled(model.isBusy || model.controls == nil)
+                .disabled(model.isBusy || !model.canControlHeadset)
 
                 if model.soundMode == .soundPersonalization {
                     Text("Turn Sound Personalization on or off here. Create or fine-tune your personalized profile in the Sennheiser Smart Control app on your phone.")

@@ -56,6 +56,11 @@ private actor MomentumClientOperationGate {
 
 @MainActor
 public final class MomentumHeadsetClient {
+    /// A paired device is not necessarily connected. This never opens an RFCOMM channel.
+    public var isHeadsetConnected: Bool {
+        (try? RFCOMMMomentumTransport.resolveHeadsetAddress(expectedAddress: headsetAddress)) != nil
+    }
+
     private static let operationGate = MomentumClientOperationGate()
     private let headsetAddress: String?
     private var operationAddress: String?

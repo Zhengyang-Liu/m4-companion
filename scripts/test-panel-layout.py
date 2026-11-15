@@ -16,6 +16,7 @@ import AppKit
 
 extension MomentumMainViewModel {
     func layoutFixture(mode: MomentumSoundMode, busy: Bool) {
+        isHeadsetConnected = true
         snapshot = MomentumSnapshot(devices: [
             MomentumDevice(index: 0, priority: 0, isConnected: true, name: "This Mac")
         ], ownIndex: 0, maxConnections: 2, batteryPercentage: 40)

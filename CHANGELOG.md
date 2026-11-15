@@ -4,6 +4,20 @@ All notable changes to M4 Companion are documented here.
 
 ## Unreleased
 
+## [0.2.4] - 2026-11-15
+
+### Fixed
+
+- Disabled headphone controls and showed an explicit connection hint when MOMENTUM 4 is not connected to this Mac.
+- Stopped treating cached snapshots as proof of a live Bluetooth connection.
+- Rejected offline operations before opening a control channel instead of waiting for a connection timeout.
+- Cleared stale state and cancelled pending slider updates on disconnect; automatically reloaded controls after reconnecting.
+
+### Tests
+
+- Added disconnected-device selection and real view-model regression coverage for cached state, offline refresh, pending writes, live monitoring, and reconnection.
+- Verified disabled clicks, cold launch, first panel reopen, live disconnect detection, and automatic reconnection on macOS with physical hardware.
+
 ## [0.2.3] - 2026-09-24
 
 ### Fixed
@@ -68,6 +82,7 @@ All notable changes to M4 Companion are documented here.
 
 The v0.1.0 binary is ad-hoc signed and not notarized. Follow the app-scoped Gatekeeper instructions in the README. A clean local reinstall from the release-style DMG was tested with the host app and WidgetKit widget both functioning after quarantine removal.
 
+[0.2.4]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.4
 [0.2.3]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.3
 [0.2.2]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.2
 [0.2.1]: https://github.com/Zhengyang-Liu/m4-companion/releases/tag/v0.2.1

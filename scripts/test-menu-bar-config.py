@@ -28,8 +28,8 @@ checks = {
     "cached panel state refreshes connections without blocking presentation":
         "await viewModel.refresh()" in host
         and "if viewModel.shouldRefreshOnOpen" not in host,
-    "automatic control sync starts after the connection refresh":
-        host.index("await viewModel.refresh()") < host.index("viewModel.startAutomaticSync()"),
+    "connection monitoring starts before the asynchronous refresh":
+        host.index("viewModel.startAutomaticSync()") < host.index("await viewModel.refresh()"),
     "cold launch waits for a valid menu-bar anchor":
         "anchorRect.minY >= screenFrame.maxY - 2" in host
         and "retryShowControlPanel" in host
